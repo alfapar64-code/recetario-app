@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receta - Recetario Saludable</title>
+    
+    <style>
+        :root {
+            --color-fondo: #f4f7f6;
+            --color-primario: #2e7d32;
+            --color-secundario: #4caf50;
+            --color-texto: #333333;
+            --color-blanco: #ffffff;
+            --color-gris-claro: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--color-fondo); color: var(--color-texto); display: flex; justify-content: center; }
+        
+        .app-container { width: 100%; max-width: 480px; background-color: var(--color-blanco); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); padding-bottom: 30px; }
+        
+        .nav-bar { background-color: var(--color-primario); color: var(--color-blanco); padding: 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .back-btn { color: var(--color-blanco); text-decoration: none; font-size: 1.5rem; margin-right: 15px; cursor: pointer; }
+        .nav-bar h2 { font-size: 1.2rem; font-weight: 500; }
+
+        .media-container { width: 100%; display: flex; overflow: hidden; }
+        .recipe-image { width: 100%; height: auto; display: block; object-fit: cover; }
+
+        .recipe-content { padding: 20px; }
+        
+        .header-with-audio { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .recipe-title { font-size: 1.8rem; color: var(--color-primario); }
+        .section-title { font-size: 1.3rem; color: var(--color-texto); border-bottom: 2px solid var(--color-secundario); padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px;}
+
+        .audio-icon-btn {
+            background-color: #e8f5e9;
+            color: var(--color-primario);
+            border: 1px solid var(--color-secundario);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0; 
+        }
+        .audio-icon-btn.playing { background-color: #ffebee; border-color: #f44336; color: #d32f2f; }
+
+        .recipe-description { font-size: 0.95rem; line-height: 1.5; color: #555; margin-bottom: 20px; font-style: italic; }
+        
+        .ingredients-list { list-style-type: none; margin-bottom: 20px; }
+        .ingredients-list li { padding: 10px 0; border-bottom: 1px solid var(--color-gris-claro); font-size: 0.95rem; }
+        .ingredients-list li::before { content: "🥗 "; }
+
+        .steps-list { counter-reset: step-counter; list-style-type: none; margin-bottom: 20px; }
+        .steps-list li { position: relative; padding-left: 40px; margin-bottom: 20px; line-height: 1.5; font-size: 0.95rem;}
+        .steps-list li::before {
+            content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: 0;
+            background-color: var(--color-secundario); color: white; width: 28px; height: 28px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;
+        }
+
+        .consejo-box {
+            background-color: #fff9c4;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .oculto { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header class="nav-bar">
+            <a onclick="history.back()" class="back-btn">←</a>
+            <h2 id="ui-categoria">Detalle de Receta</h2>
+        </header>
+
+        <div class="media-container">
+            <img id="ui-imagen" src="" alt="Cargando receta..." class="recipe-image">
+        </div>
+
+        <main class="recipe-content">
+            
+            <audio id="audio-intro" preload="auto"></audio>
+            <audio id="audio-ingredientes" preload="metadata"></audio>
+            <audio id="audio-aderezo" preload="metadata"></audio>
+            <audio id="audio-preparacion" preload="metadata"></audio>
+            <audio id="audio-consejo" preload="metadata"></audio>
+
+            <div class="header-with-audio">
+                <h1 id="ui-titulo" class="recipe-title">Cargando...</h1>
+            </div>
+            <p id="ui-descripcion" class="recipe-description"></p>
+
+            <div class="header-with-audio">
+                <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Ingredientes</h2>
+                <button id="btn-audio-ingredientes" class="audio-icon-btn control-audio oculto" data-target="audio-ingredientes">▶</button>
+            </div>
+            <div style="border-top: 2px solid var(--color-secundario); margin-bottom: 15px;"></div>
+            <ul id="ui-lista-ingredientes" class="ingredients-list"></ul>
+
+            <div id="contenedor-aderezo" class="oculto">
+                <div class="header-with-audio">
+                    <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">El Aderezo</h2>
+                    <button id="btn-audio-aderezo" class="audio-icon-btn control-audio oculto" data-target="audio-aderezo">▶</button>
+                </div>
+                <div style="border-top: 2px solid var(--color-secundario); margin-bottom: 15px;"></div>
+                <ul id="ui-lista-aderezo" class="ingredients-list"></ul>
+            </div>
+
+            <div class="header-with-audio">
+                <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Modo de Preparación</h2>
+                <button id="btn-audio-preparacion" class="audio-icon-btn control-audio oculto" data-target="audio-preparacion">▶</button>
+            </div>
+            <div style="border-top: 2px solid var(--color-secundario); margin-bottom: 15px;"></div>
+            <ol id="ui-lista-preparacion" class="steps-list"></ol>
+
+            <div id="contenedor-consejo" class="oculto">
+                <div class="header-with-audio">
+                    <h2 class="section-title" style="margin-top: 0; border: none; padding: 0;">Consejo Nutricional</h2>
+                    <button id="btn-audio-consejo" class="audio-icon-btn control-audio oculto" data-target="audio-consejo">▶</button>
+                </div>
+                <div style="border-top: 2px solid var(--color-secundario); margin-bottom: 5px;"></div>
+                <div id="ui-texto-consejo" class="consejo-box"></div>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- Base de Datos Integrada en la Plantilla para Pruebas Locales -->
+    <script>
+        const baseDeDatosRecetas = {
+            // ==========================================
+            // SECCIÓN 1: ENSALADAS DETOX
+            // ==========================================
+            "ensalada-verano": {
+                categoria: "Detox",
+                titulo: "Ensalada Verano",
+                descripcion: "Una explosión de sabores tropicales con camarón jugoso, mango dulce y aguacate cremoso. Perfecta para los días calurosos.",
+                imagen: "grupo_detox/img/ensalada-verano.webp",
+                audios: {
+                    introduccion: "grupo_detox/audio/ensalada_verano_introduccion.mp3",
+                    ingredientes: "grupo_detox/audio/ensalada_verano_ingredientes.mp3",
+                    aderezo: "grupo_detox/audio/ensalada_verano_aderezo.mp3",
+                    preparacion: "grupo_detox/audio/ensalada_verano_preparacion.mp3",
+                    consejo: "grupo_detox/audio/ensalada_verano_consejos.mp3"
+                },
+                ingredientes: ["Lechuga americana, morada y arúgula", "½ mango maduro en cubos", "½ aguacate maduro en cubos", "2 cucharadas de ajonjolí negro", "300 g de camarón limpio"],
+                aderezo: ["Jugo de 2 limones sicilianos", "1 cucharada (sopera) de miel", "1 chile rojo sin semillas", "Aceite de oliva extravirgen"],
+                preparacion: ["Higienización: Lava las hojas y déjalas en remojo en una solución de vinagre por 15 min. Sécalas bien para mantener lo crujiente.", "Frutas: Corta el mango y el aguacate en cubos de 1 cm. Rocía el aguacate con limón para que no se oscurezca.", "Camarón: Sazona con sal y pimienta. Dóralo en aceite de coco por 2-3 min de cada lado hasta que quede rosado.", "Aderezo y montaje: Emulsiona los ingredientes del aderezo. Mezcla las hojas y las frutas, agrega el camarón y termina con ajonjolí."],
+                consejo_nutriologa: "El ajonjolí negro es rico en calcio y magnesio. Déjalo en remojo por 2 h antes de usarlo para potenciar la absorción."
+            },
+            "ensalada-detox": {
+                categoria: "Detox",
+                titulo: "Ensalada Detox",
+                descripcion: "¡La estrella de la desintoxicación! Pollo asado, pepino marinado y un aderezo cremoso de aguacate inolvidable.",
+                imagen: "grupo_detox/img/ensalada_detox.webp",
+                audios: {
+                    introduccion: "grupo_detox/audio/ensalada_detox_introduccion.mp3",
+                    ingredientes: "grupo_detox/audio/ensalada_detox_ingredientes.mp3",
+                    aderezo: "grupo_detox/audio/ensalada_detox_aderezo.mp3",
+                    preparacion: "grupo_detox/audio/ensalada_detox_preparacion.mp3",
+                    consejo: "grupo_detox/audio/ensalada_detox_consejos.mp3"
+                },
+                ingredientes: ["Mezcla de lechugas y arúgula", "1 pepino japonés rebanado", "4 cdas. de vinagre + 2 cdas. de xilitol", "4 cucharadas de granola salada", "250 g de pechuga de pollo en tiras"],
+                aderezo: ["1 avocado o aguacate", "Jugo de limón + ½ diente de ajo", "1 cda. de aceite de oliva + ½ cda. de mostaza Dijon"],
+                preparacion: ["Pepino: Rebana el pepino muy fino y marínalo en el vinagre con xilitol por 15 min. Escúrrelo antes de montar.", "Pollo: Sazona con paprika ahumada, sal y pimienta. Ásalo en aceite de oliva hasta que dore perfectamente.", "Crema: Procesa el avocado con limón, ajo, aceite de oliva y mostaza hasta que quede liso y aterciopelado."],
+                consejo_nutriologa: "Las grasas buenas del aguacate ayudan en la absorción de vitaminas liposolubles de las hojas verdes."
+            },
+            "ensalada-primavera": {
+                categoria: "Detox",
+                titulo: "Ensalada Primavera",
+                descripcion: "Colores vibrantes y textura increíble. La col y la zanahoria aportan lo crujiente que contrasta con el aderezo de yogur.",
+                imagen: "grupo_detox/img/ensalada_primavera.webp",
+                audios: {
+                    introduccion: "grupo_detox/audio/ensalada_primavera_introduccion.mp3",
+                    ingredientes: "grupo_detox/audio/ensalada_primavera_ingredientes.mp3",
+                    aderezo: "grupo_detox/audio/ensalada_primavera_aderezo.mp3",
+                    preparacion: "grupo_detox/audio/ensalada_primavera_preparacion.mp3"
+                },
+                ingredientes: ["Col blanca y morada ralladas", "Zanahoria rallada + pasas", "½ cebolla morada + perejil", "1 lata de atún en agua"],
+                aderezo: ["170 g de yogur natural (colado)", "Jugo de ½ limón siciliano", "Hierbabuena fresca + aceite de oliva"],
+                preparacion: ["Cebolla: Rebánala y déjala en agua con hielo por 20 min para quitarle lo picante y mantenerla crujiente.", "Yogur: Cuela el yogur en un filtro de café por 8 h para un aderezo estilo griego, mucho más cremoso.", "Mezcla: Combina las verduras ralladas con el atún y termina con el aderezo y la hierbabuena."]
+            },
+            "ensalada-italiana": {
+                categoria: "Detox",
+                titulo: "Ensalada Italiana",
+                descripcion: "Un carpaccio de calabacita marinado que se derrite en la boca, acompañado de huevos de codorniz y jitomates cherry.",
+                imagen: "grupo_detox/img/ensalada_italiana.webp",
+                audios: {
+                    introduccion: "grupo_detox/audio/ensalada_italiana_introduccion.mp3",
+                    ingredientes: "grupo_detox/audio/ensalada_italiana_ingredientes.mp3",
+                    aderezo: "grupo_detox/audio/ensalada_italiana_aderezo.mp3",
+                    preparacion: "grupo_detox/audio/ensalada_italiana_preparacion.mp3"
+                },
+                ingredientes: ["Calabacita italiana en rebanadas finas", "Lechuga, arúgula y zanahoria en láminas", "12 huevos de codorniz + jitomates cherry", "Parmesano en láminas + hierbabuena"],
+                aderezo: ["Vinagreta Clásica: Aceite de oliva, vinagre y mostaza", "Mezcla de hierbas deshidratadas", "Ajo y cebolla granulados"],
+                preparacion: ["Calabacita: Marina las rebanadas finas en limón, aceite de oliva y hierbabuena por 3 días en el refrigerador.", "Vinagreta: Agita todos los condimentos en un frasco de vidrio. Déjala reposar 24 h para que se concentre el sabor.", "Montaje: Acomoda las hojas, los huevos, los jitomates y termina con la calabacita y el queso."]
+            },
+            "ensalada-garbanzo": {
+                categoria: "Detox",
+                titulo: "Ensalada de Garbanzo",
+                descripcion: "Una ensalada robusta y completa. El garbanzo cocido en su punto exacto con brócoli al dente y nueces crujientes.",
+                imagen: "grupo_detox/img/ensalada_garbanzo.webp",
+                audios: {
+                    introduccion: "grupo_detox/audio/ensalada_garbanzo_introduccion.mp3",
+                    ingredientes: "grupo_detox/audio/ensalada_garbanzo_ingredientes.mp3",
+                    aderezo: "grupo_detox/audio/ensalada_garbanzo_aderezo.mp3",
+                    preparacion: "grupo_detox/audio/ensalada_garbanzo_preparacion.mp3"
+                },
+                ingredientes: ["1 taza de garbanzo (remojo 12 h)", "Floretes de brócoli pequeños", "Jitomates cherry + nueces picadas", "Hojas de lechuga y arúgula"],
+                aderezo: ["Vinagreta Rústica: Champiñón París + pimiento amarillo", "Cebolla morada + vinagre de manzana", "Perejil o cilantro fresco"],
+                preparacion: ["Garbanzo: Cuécelo en olla de presión por 10 min después del remojo. Debe quedar suave, pero entero.", "Brócoli: Sofríelo solo 2 min en aceite de oliva para mantener el color vibrante y el punto al dente.", "Vinagreta: Pica los champiñones y las verduras muy finamente y mézclalos con el vinagre y el aceite de oliva."]
+            },
+
+            // ==========================================
+            // SECCIÓN 5: GUÍA RÁPIDA (32 RECETAS)
+            // ==========================================
+            
+            "ensalada-cesar": {
+                categoria: "Rápidas",
+                titulo: "Ensalada César",
+                descripcion: "Un clásico infalible. Pechuga de pollo dorada, crutones crujientes y el inconfundible aderezo de queso parmesano.",
+                imagen: "grupo_rápidas/img/cesar.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/cesar_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/cesar_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/cesar_instrucciones.mp3"
+                },
+                ingredientes: ["6 cucharadas de mayonesa", "40 gramos de queso parmesano rallado grueso", "3 cucharadas de jugo de limón", "2 cucharadas de aceite de oliva", "1 a 2 filetes de pechuga de pollo", "1 a 2 filetes de anchoa y 1 diente de ajo picado", "Sal y pimienta negra al gusto", "Una pieza de lechuga romana", "½ taza de crutones"],
+                preparacion: ["Montaje: Distribuí toda la lechuga en una fuente, colocá las tiras de pollo y los crutones encima, agregá bastante aderezo y terminá con el queso parmesano. Ahora solo queda servir."]
+            },
+            "carne-asada": {
+                categoria: "Rápidas",
+                titulo: "Carne Asada",
+                descripcion: "Osobuco deshilachado súper sabroso que transformará cualquier cama de vegetales en un plato principal contundente.",
+                imagen: "grupo_rápidas/img/asada.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/asada_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/asada_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/asada_instrucciones.mp3"
+                },
+                ingredientes: ["300 gramos de osobuco de vaca", "4 dientes de ajo machacados", "1 tomate picado en cubos", "1 cebolla de tamaño mediano picada", "4 cucharadas de aceite de oliva", "1 cucharada de perejil finamente picado", "Pimienta negra recién molida al gusto", "Sal al gusto"],
+                preparacion: ["Preparación inicial: Cortá 300 g de osobuco de vaca en cubos de 3 cm. Sofreí 1 cebolla mediana y 4 dientes de ajo machacados en 4 cucharadas de aceite.", "Integración: Agregá la carne, 1 tomate finamente picado y 1 cucharada de perejil. Condimentá con sal y pimienta al gusto.", "Cocción: Cociná en olla de presión por 1 hora; después de enfriar, deshilachá con una cuchara y reservá para la ensalada."]
+            },
+            "ensalada-calabaza-azul": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Calabaza con Queso Azul",
+                descripcion: "Una mezcla sofisticada donde el dulzor de la calabaza asada contrasta perfectamente con la intensidad del queso azul.",
+                imagen: "grupo_rápidas/img/azul.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/azul_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/azul_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/azul_instrucciones.mp3"
+                },
+                ingredientes: ["150 g de garbanzo cocido", "50 gramos de semilla de girasol", "4 cucharadas de aceite de oliva", "½ taza de queso azul en cubos", "½ calabaza kabocha pelada (unos 500 g)", "1 manojo de lechuga rizada y 1½ manojo de mini berro", "Paprika picante, sal y pimienta negra recién molida al gusto"],
+                preparacion: ["Carne: Sofreí 300 g de osobuco con condimentos; cociná en olla de presión por 1 h y deshilachá. (Opcional según preferencia).", "Calabaza: Horneá cubos sazonados (aceite, paprika, sal) a 220°C por 30 min.", "Garbanzo: Horneá los granos cocidos con paprika y aceite por 15 min a 200 °C.", "Hojas: Desinfectá lechuga y berro; secá bien antes de integrar todos los ingredientes."]
+            },
+            "ensalada-loto-pollo": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Loto de Pollo",
+                descripcion: "Una explosión de texturas: fideos de arroz, carnes caramelizadas y vegetales crujientes con un toque asiático.",
+                imagen: "grupo_rápidas/img/loto.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/loto_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/loto_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/loto_instrucciones.mp3"
+                },
+                ingredientes: ["Fideo de arroz bifum (250 g) y Calabaza Zapallo (500 g pelada)", "Osobuco de vaca (300 g) y Pechuga de pollo (300 g en cubos)", "Garbanzo (150 g cocido) y Queso azul (½ taza en cubos)", "Repollo colorado (1 taza rebanada)", "Lechuga rizada y berro (1 manojo de cada uno)", "Semilla de girasol (50 g) y Castañas de cajú (en trozos)", "Aceite de oliva, sal, pimienta, ajo (4 dientes) y cebolla (1 mediana)", "Salsa de soja, azúcar mascabo, jugo de limón y jengibre rallado", "Tomate, perejil, cebollín, ají serrano y Paprika picante"],
+                preparacion: ["Osobuco: Sofreí el osobuco con cebolla, ajo, tomate y perejil; cociná en olla de presión por 1 h y deshilachá.", "Pollo: Mariná el pollo en salsa de soja con azúcar por 30 min y dorá hasta caramelizar.", "Horneado: Horneá la calabaza sazonada (220°C/30 min) y el garbanzo (200°C/15 min).", "Fideos: Cociná el bifum por 2 min y dale shock térmico en agua helada.", "Montaje: Mezclá las hojas con los elementos preparados y terminá con queso, semillas y el aderezo."]
+            },
+            "salpicon-figfit": {
+                categoria: "Rápidas",
+                titulo: "Salpicón FIGFIT",
+                descripcion: "Una receta robusta que integra proteínas, pastas ligeras y el dulzor de los frutos secos con un aderezo de yogur.",
+                imagen: "grupo_rápidas/img/salpicon.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/salpicon_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/salpicon_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/salpicon_instrucciones.mp3"
+                },
+                ingredientes: ["Carnes: 500 g de pollo deshebrado, 300 g de osobuco y 300 g de pollo en cubos", "Verduras: Lechuga, berro, repollo colorado, zanahoria, tomate y puerro", "Granos y Pastas: Bifum, garbanzo, choclo y arveja", "Frutos y Semillas: Calabaza Zapallo, semilla de girasol, castañas de cajú y pasas", "Lácteos: Yogur natural y queso de sabor intenso", "Sazón: Aceite de oliva, salsa de soja, azúcar mascabo, limón, jengibre, ajo y cebolla", "Toque final: Sésamo, ají picante, paprika, perejil, sal y pimienta negra"],
+                preparacion: ["Osobuco: Cociná con cebolla, ajo, tomate y perejil en olla de presión por 1 h; deshilachá.", "Pollo en Cubos: Mariná en salsa de soja y azúcar por 30 min; dorá a fuego alto hasta caramelizar.", "Horno: Horneá calabaza sazonada (220°C/30 min) y garbanzo (200°C/15 min).", "Bifum: Hidratá en agua hirviendo por 2 min y dale shock térmico en agua helada.", "Pollo Deshebrado: Cociná con sal, deshilachá y mezcla con vegetales crudos, pasas y aderezo de yogur.", "Montaje: Combiná las hojas con los demás elementos y terminá con semillas, nueces y sésamo."]
+            },
+            "chips-batata": {
+                categoria: "Rápidas",
+                titulo: "Chips de Batata",
+                descripcion: "Batatas horneadas, finas y crujientes, con un toque ahumado. Ideales como base o acompañante.",
+                imagen: "grupo_rápidas/img/batata.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/batata_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/batata_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/batata_instrucciones.mp3"
+                },
+                ingredientes: ["2 batatas cortadas en rebanadas muy delgadas", "Aceite de oliva al gusto", "Sal", "Paprika picante al gusto", "Pimienta negra al gusto"],
+                preparacion: ["Preparación: Cortar la batata en rebanadas.", "Sazonado: Colocar la batata rebanado en un tazón, mezclar con aceite, sal, paprika y pimienta negra.", "Integración: Mezclar con las manos para que el sazón cubra todas las batatas.", "Cocción: Llevar a hornear en horno precalentado, 200 C, por aproximadamente 30 minutos."]
+            },
+            "ensalada-light": {
+                categoria: "Rápidas",
+                titulo: "Ensalada LIGHT",
+                descripcion: "Láminas de salmón asado al romero sobre un lecho de hojas verdes y parmesano.",
+                imagen: "grupo_rápidas/img/light.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/light_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/light_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/light_instrucciones.mp3"
+                },
+                ingredientes: ["1 taza de crutones", "400 g de salmón cortado en lascas", "1/2 manojo de hojas de lechuga", "1/4 de taza de queso parmesano rallado grueso", "Romero", "2 tazas de tomates cherry", "Sal al gusto", "1/2 manojo de hojas de arúgula", "Pimienta negra al gusto"],
+                preparacion: ["Limpieza: Desinfectá las hojas de arúgula y lechuga y los tomates cherry.", "Preparación inicial: Trozá las hojas en pedazos más pequeños y cortá los tomates a la mitad.", "Condimentado: Condimentá las lascas de salmón con romero, sal y pimienta negra.", "Cocción: Asá el salmón rápidamente en una sartén hasta dorar.", "Base: En una fuente, armá la base con la mezcla de arúgula y lechuga.", "Montaje: Distribuí los tomates y las lascas de salmón sobre las hojas.", "Toque final: Terminá espolvoreando el queso parmesano rallado grueso y los crutones.", "Servicio: Condimentá toda la ensalada con sal y pimienta al gusto antes de servir."]
+            },
+            "ensalada-repollo": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Repollo Cremosa",
+                descripcion: "Refrescante ensalada de col (coleslaw) con un ligero aderezo de yogur vegano y el toque dulce de las pasas.",
+                imagen: "grupo_rápidas/img/repollo.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/repollo_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/repollo_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/repollo_instrucciones.mp3"
+                },
+                ingredientes: ["1/2 repollo pequeño cortado en tiras", "1/2 taza de choclo", "1/2 taza de pasas", "1/2 taza de yogur natural vegano", "1 cucharada de mostaza", "1 cucharada de aceite de oliva", "1 cucharada de salsa de soja", "Sal y pimienta negra al gusto"],
+                preparacion: ["Base: Colocá repollo, choclo y pasas en una ensaladera.", "Aderezo: Mezclá yogur vegano, mostaza, aceite y salsa de soja para el aderezo.", "Condimentado: Condimentá con sal y pimienta.", "Montaje: Volcá sobre la ensalada y mezcla bien."]
+            },
+            "ensalada-zanahoria": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Cruda de Zanahoria",
+                descripcion: "Práctica y luminosa. Zanahorias finamente cortadas y marinadas para resaltar todo su sabor natural.",
+                imagen: "grupo_rápidas/img/zanahoria.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/zanahoria_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/zanahoria_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/zanahoria_instrucciones.mp3"
+                },
+                ingredientes: ["2 zanahorias", "Aceite de oliva al gusto", "Pimienta negra al gusto", "Sal al gusto", "Vinagre al gusto"],
+                preparacion: ["Preparación: Cortá las zanahorias finamente.", "Marinado: Condimentalas en un recipiente con aceite, pimienta, sal, limón y vinagre.", "Reposo: Dejá reposar para que se marinen."]
+            },
+            "ensalada-repollo-colorado": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Colorida de Repollo Colorado",
+                descripcion: "Un festival crujiente de col lombarda y zanahoria, enriquecida con semillas y un toque de cúrcuma.",
+                imagen: "grupo_rápidas/img/colorida.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/colorida_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/colorida_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/colorida_instrucciones.mp3"
+                },
+                ingredientes: ["1/2 repollo colorado pequeño", "1 zanahoria grande", "1 taza de palmito picado", "3 cucharadas de mix de semillas (calabaza, girasol y linaza)", "Sal y pimienta negra al gusto", "1 cucharadita de cúrcuma", "1 cucharada de vinagre balsámico", "2 cucharadas de aceite de oliva"],
+                preparacion: ["Integración: Combiná los vegetales y las semillas en un tazón.", "Sazonado: Agregá sal, pimienta, cúrcuma, vinagre y aceite.", "Mezcla: Mezclá todo de manera homogénea."]
+            },
+            "ensalada-papa-atun": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Papa con Atún",
+                descripcion: "Un clásico rápido y muy saciante, combinando la cremosidad de la papa con atún, aceitunas y morrón.",
+                imagen: "grupo_rápidas/img/atun.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/atun_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/atun_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/atun_instrucciones.mp3"
+                },
+                ingredientes: ["1/2 cebolla picada", "10 aceitunas picadas", "1/2 morrón rojo picado", "1/2 taza de arvejas", "2 papas medianas cocidas y picadas en cubos", "2 cucharadas de aceite de oliva", "1 lata de atún (sin el agua)", "Sal, pimienta y perejil al gusto"],
+                preparacion: ["Base: Mezclá la cebolla, las aceitunas, el morrón, las arvejas, las papas y el atún en un tazón.", "Condimentado: Agregá el aceite y condimentá con sal, pimienta y perejil al gusto.", "Mezcla: Integrá todos los ingredientes delicadamente hasta que queden bien integrados."]
+            },
+            "ensalada-parma": {
+                categoria: "Rápidas",
+                titulo: "Ensalada con Parma",
+                descripcion: "Elegante y fresca. El sabor intenso del jamón crudo equilibra la dulzura del melón y la vinagreta de naranja.",
+                imagen: "grupo_rápidas/img/parma.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/parma_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/parma_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/parma_instrucciones.mp3"
+                },
+                ingredientes: ["Lechuga rizada al gusto", "Lechuga romana al gusto", "Arúgula al gusto", "Melón al gusto", "Tomate al gusto", "Jamón de Parma al gusto", "Ricota al gusto", "3 cucharadas de jugo de naranja", "2 cucharadas de vinagre balsámico", "1 cucharada de miel", "1 cucharada de mostaza", "Pimienta negra molida al gusto"],
+                preparacion: ["Preparación: Cortá las hojas, el melón, el tomate y el jamón en trozos pequeños.", "Integración: Desmenuzá la ricota y combinalo con los demás elementos en un recipiente.", "Aderezo: Prepará el aderezo en un frasco aparte, integrando todos sus componentes.", "Montaje: Bañá la mezcla con el aderezo e incorporá bien."]
+            },
+            "ensalada-kani": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Fresca con KANI",
+                descripcion: "Ligera, oriental y llena de sabor, con la textura suave del kanikama y un aderezo de mostaza y miel.",
+                imagen: "grupo_rápidas/img/kani.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/kani_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/kani_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/kani_instrucciones.mp3"
+                },
+                ingredientes: ["Lechuga romana al gusto", "Repollo al gusto", "Tomate al gusto", "Zanahoria al gusto", "Kanikama al gusto", "2 cucharadas de miel", "2 cucharadas de mostaza dijon", "1/2 taza de aceite de oliva", "Sal y pimienta negra al gusto"],
+                preparacion: ["Vegetales: Trozá la lechuga y cortá en tiras el repollo finamente.", "Preparación inicial: Picá el tomate sin semillas y rallá la zanahoria.", "Integración: Cortá el kanikama y combiná todo en una ensaladera.", "Aderezo: Mezclá miel, mostaza, aceite, sal y pimienta hasta homogeneizar.", "Montaje: Bañá la ensalada con el aderezo obtenido."]
+            },
+            "ensalada-pollo-palta": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Pollo y Palta",
+                descripcion: "Una presentación creativa y saciante, ideal para aprovechar pollo sobrante en un envase natural.",
+                imagen: "grupo_rápidas/img/palta.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/palta_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/palta_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/palta_instrucciones.mp3"
+                },
+                ingredientes: ["1/2 palta", "Pollo deshebrado y sofrito al gusto", "1/2 zanahoria rallada", "1/2 tomate", "1/2 morrón verde", "Aceituna negra al gusto", "Alcaparras al gusto", "Albahaca baby al gusto", "Nueces y semillas al gusto", "Sal al gusto", "Aceite al gusto"],
+                preparacion: ["Integración: Combiná el pollo, la zanahoria, el tomate y el morrón.", "Montaje: Rellená la cavidad del palta con esa mezcla.", "Decoración: Decorá con aceitunas, alcaparras, albahaca y nueces.", "Toque final: Terminá condimentando con sal y aceite."]
+            },
+            "ensalada-portuguesa": {
+                categoria: "Rápidas",
+                titulo: "Ensalada a la Portuguesa",
+                descripcion: "Una comida completa en sí misma, combinando proteínas, vegetales y un aderezo clásico.",
+                imagen: "grupo_rápidas/img/portuguesa.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/portuguesa_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/portuguesa_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/portuguesa_instrucciones.mp3"
+                },
+                ingredientes: ["2 huevos", "75 g de arvejas frescas", "Jamón al gusto", "1 pieza de lechuga romana", "100 gramos de palmito", "2 cucharadas de mayonesa", "2 cucharadas de mostaza", "Aceite de oliva al gusto", "Sal al gusto", "Pimienta negra al gusto", "Vinagre al gusto"],
+                preparacion: ["Cocción: Cociná los huevos y los arvejas en agua hirviendo.", "Preparación inicial: Freí el jamón hasta obtener una textura crujiente y desmenuzalo.", "Base: Mezclá la lechuga, el palmito y las arvejas en un recipiente.", "Montaje: Acomodá los huevos rebanados y el jamón sobre la base.", "Aderezo: Combiná mayonesa, mostaza, aceite, condimentos y vinagre para el aderezo."]
+            },
+            "ensalada-proteica-garbanzo": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Proteica de Garbanzo",
+                descripcion: "Un boost de energía vegetal con un perfil de sabor marcadamente oriental.",
+                imagen: "grupo_rápidas/img/proteica.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/proteica_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/proteica_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/proteica_instrucciones.mp3"
+                },
+                ingredientes: ["200 gramos de garbanzo cocido", "Aceite de oliva al gusto", "1/2 cebolla finamente picada", "1 cucharada de cebollín", "2 cucharadas de jengibre finamente picado", "1 cucharada de jugo de limón", "2 cucharadas de salsa de soja", "1 puerro entero finamente picado", "Espinaca al gusto", "1/4 de taza de salsa de soja", "3 cucharadas de aceite de sésamo o de oliva", "1/4 de taza de jugo de limón", "2 cucharadas de cebollín", "2 cucharadas de perejil"],
+                preparacion: ["Integración: Reuní el garbanzo, la cebolla, el cebollín, el jengibre, el puerro y la espinaca en un recipiente.", "Aderezo: Prepará el aderezo combinando el aceite, el jugo de limón, la salsa de soja, el aceite de sésamo y el perejil.", "Montaje: Volcá el aderezo sobre los vegetales y mezcla para que el sabor se reparta por toda la ensalada."]
+            },
+            "ensalada-palta-choclo": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Palta con Choclo",
+                descripcion: "Sencilla, colorida y perfecta para un almuerzo rápido y reconfortante.",
+                imagen: "grupo_rápidas/img/choclo.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/choclo_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/choclo_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/choclo_instrucciones.mp3"
+                },
+                ingredientes: ["1/2 cebolla morada cortada en forma de media luna", "2 tomates medianos maduros cortados en cubos", "1/2 taza de choclo cocido", "1 palta pequeña cortado en cubos", "Jugo de medio limón", "Sal al gusto", "Aceite de oliva al gusto", "Lechuga lisa al gusto"],
+                preparacion: ["Integración: Mezclá la cebolla morada, los tomates, el choclo y el palta en un recipiente.", "Base: Agregá la lechuga lisa al gusto.", "Condimentado: Condimentá la preparación con jugo de limón, sal y aceite de oliva."]
+            },
+            "ensalada-waldorf": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Waldorf",
+                descripcion: "Un clásico de la gastronomía mundial que equilibra la acidez de la manzana con la cremosidad del yogur.",
+                imagen: "grupo_rápidas/img/waldorf.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/waldorf_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/waldorf_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/waldorf_instrucciones.mp3"
+                },
+                ingredientes: ["1/4 de taza de yogur natural", "1/4 de taza de mayonesa", "Jugo de 1 limón", "Sal y pimienta negra al gusto", "1 racimo de uvas sin semilla y cortadas a la mitad", "1 tallo de apio picado", "2 manzanas verdes o rojas en cubos", "1/2 taza de nueces tostadas", "Hojas de lechuga al gusto"],
+                preparacion: ["Aderezo: Mezclá el yogur, la mayonesa, el jugo de limón, la sal y la pimienta para formar el aderezo.", "Integración: Agregá las uvas, el apio, las manzanas y las nueces tostadas.", "Servicio: Serví la mezcla sobre una base de hojas de lechuga."]
+            },
+            "ensalada-fresh-mango": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Fresh con Mango",
+                descripcion: "Refrescante, dulce y salada a la vez. Ideal para acompañar proteínas magras a la parrilla.",
+                imagen: "grupo_rápidas/img/fresh.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/fresh_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/fresh_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/fresh_instrucciones.mp3"
+                },
+                ingredientes: ["1 mango palmer", "1 palta", "2 pepinos japoneses", "2 tomates saladet", "Perejil al gusto", "Sal al gusto", "2 cucharadas de vinagre de manzana"],
+                preparacion: ["Preparación: Picá el mango, la palta, los pepinos y los tomates.", "Integración: Mezclá los ingredientes en un tazón con el perejil.", "Condimentado: Condimentá con sal y vinagre de manzana antes de servir."]
+            },
+            "ensalada-mango": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Mango",
+                descripcion: "Con una fuerte inspiración tailandesa, esta ensalada combina el dulzor del mango con el umami de la salsa de pescado.",
+                imagen: "grupo_rápidas/img/mango.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/mango_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/mango_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/mango_instrucciones.mp3"
+                },
+                ingredientes: ["1 cucharada de azúcar mascabo", "1 cucharada de salsa de pescado concentrada", "Jugo de 1 limón", "1/2 ají picante cortado en cubitos pequeños", "1 mango grande cortado en rebanadas finas", "1/2 cebolla morada cortada en rodajas pequeñas", "Cilantro al gusto", "Maní tostado picado grueso"],
+                preparacion: ["Aderezo: Mezclá azúcar, salsa de pescado, jugo de limón y ají; reservá.", "Base: Cubrí una fuente para horno con mango y tapá con cebolla.", "Montaje: Volcá el aderezo y terminá con cilantro y maní."]
+            },
+            "ensalada-rucula-caprese": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Rúcula Caprese",
+                descripcion: "Una reinterpretación fresca de la tradicional caprese, utilizando mozzarella de búfala y un pesto casero rápido.",
+                imagen: "grupo_rápidas/img/rucula.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/rucula_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/rucula_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/rucula_instrucciones.mp3"
+                },
+                ingredientes: ["1 manojo de arúgula", "10 tomates cherry", "10 piezas de mozzarella de búfala", "1 diente de ajo", "1/2 taza de albahaca fresca", "1/2 taza de cilantro", "1/2 taza de cebollín", "3 nueces", "2 cucharadas de queso parmesano rallado", "1/2 limón", "1/4 de taza de aceite de oliva", "Sal al gusto", "Pimienta negra al gusto"],
+                preparacion: ["Preparación: Lavá las hojas de arúgula y cortá los tomates a la mitad.", "Mozzarella: Cortá las mozzarellas de búfala en tres partes.", "Base: Mezclá esos ingredientes en un tazón y reservá.", "Aderezo: Procesá el resto de los ingredientes en el procesador hasta formar un aderezo."]
+            },
+            "ensalada-garbanzo-batata": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Garbanzo con Batata",
+                descripcion: "Confortable y llena de contrastes, con el toque dulce de la batata asada y una marinada especial.",
+                imagen: "grupo_rápidas/img/garbanzo.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/garbanzo_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/garbanzo_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/garbanzo_instrucciones.mp3"
+                },
+                ingredientes: ["<b>Componentes</b>","1 cebolla morada","Hojas de rúcula al gusto","1 taza de garbanzo cocido","1/2 batata cocida y sazonada en cubos","1/2 pepino japonés cortado en cubos con cáscara","Sésamo al gusto","Hojas de tomillo seco al gusto","<b>Aderezo</b>","1 taza de vinagre de manzana","1 taza de agua","1 cucharada de azúcar mascabo","1/2 cucharadita de sal","Granos de pimienta al gusto","2 cucharadas de aceite de oliva","2 cucharadas de vinagre de manzana (extra)","1 cucharadita de sal (extra)","Pimienta negra al gusto"],
+                preparacion: ["Marinada: Mezclá el vinagre, el agua, el azúcar, la sal y los granos de pimienta; reservá.", "Integración: En un tazón, juntá la arúgula, el garbanzo, la batata, el pepino y la cebolla morada.", "Condimentado: Condimentá con el aceite, el vinagre de manzana, la sal y la pimienta negra.", "Toque final: Terminá espolvoreando sésamo y tomillo seco al gusto."]
+            },
+            "ensalada-acelga-oriental": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Acelga Oriental",
+                descripcion: "Un salteado rápido y vibrante que transforma la acelga común en un plato digno de restaurante asiático.",
+                imagen: "grupo_rápidas/img/acelga.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/acelga_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/acelga_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/acelga_instrucciones.mp3"
+                },
+                ingredientes: ["8 hojas de acelga en tiras (del ancho de un dedo)", "1/2 zanahoria rallada (en rallador fino)", "1/2 cebolla en rebanadas finas", "1/2 morrón verde en rebanadas finas", "1/2 taza cafetera de aceite de oliva", "4 dientes de ajo cortados en láminas finas", "4 cm de jengibre picado", "1 taza cafetera de salsa de soja", "2/3 de taza cafetera de vinagre", "Sésamo blanco al gusto"],
+                preparacion: ["Sofreír: Sofreí la acelga, la zanahoria, la cebolla y el morrón en el aceite con ajo y jengibre.", "Aderezo: Agregá la salsa de soja y el vinagre; mezcla bien.", "Toque final: Terminá espolvoreando sésamo blanco al gusto."]
+            },
+            "ensalada-poroto-negro": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Poroto Negro",
+                descripcion: "Energizante y rápida, con un perfil de sabor inspirado en el frescor del pico de gallo.",
+                imagen: "grupo_rápidas/img/poroto.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/poroto_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/poroto_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/poroto_instrucciones.mp3"
+                },
+                ingredientes: ["1 y 1/2 taza de poroto negro", "1/2 cebolla", "1/2 morrón verde", "Tomates cherry al gusto", "1/2 pepino", "Jugo de 1/2 limón", "Perejil y menta al gusto", "Sal y ají molido al gusto", "Un poco de aceite de oliva, vinagre y azúcar para el aderezo"],
+                preparacion: ["Sofreír: Sofreí la acelga, la zanahoria, la cebolla y el morrón en el aceite con ajo y jengibre.", "Aderezo: Agregá la salsa de soja y el vinagre; mezcla bien.", "Toque final: Terminá espolvoreando sésamo blanco al gusto."]
+            },
+            "ensalada-colorida-palta": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Colorida con Palta",
+                descripcion: "Una paleta visual de verdes, púrpuras y naranjas con una vinagreta clásica.",
+                imagen: "grupo_rápidas/img/colorida_palta.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/colorida_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/colorida_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/colorida_instrucciones.mp3"
+                },
+                ingredientes: ["Lechuga al gusto", "Arúgula al gusto", "Radicchio morado al gusto", "Zanahoria al gusto", "Cebollín al gusto", "Tomate al gusto", "Palta al gusto", "Aceite de oliva al gusto", "Sal al gusto", "Pimienta negra al gusto", "Vinagre al gusto"],
+                preparacion: ["Base: Mezclá las hojas, la zanahoria y el cebollín en un tazón.", "Integración: Agregá el tomate y el palta en láminas.", "Condimentado: Condimentá con aceite, sal, pimienta y vinagre."]
+            },
+            "ensalada-brocoli-lenteja": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Brócoli con Lenteja",
+                descripcion: "Un plato principal tibio, robusto y altamente nutritivo con una irresistible cebolla caramelizada al vinagre balsámico.",
+                imagen: "grupo_rápidas/img/brocoli.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/brocoli_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/brocoli_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/brocoli_instrucciones.mp3"
+                },
+                ingredientes: ["<b>Para el Caramelizado</b>","1 cucharada de salsa de soja de coco","1 cucharada de vinagre balsámico","1/2 cebolla grande rebanada en media luna","<b>Resto de la Ensalada</b>","2 dientes de ajo picados o machacados","1 taza de brócoli blanqueado","1 y 1/2 taza de lenteja cocida","2 cucharadas de aceituna negra","Sal al gusto","Aceite de oliva al gusto","1 cucharada de nuez picada","Hierbas al gusto"],
+                preparacion: ["Caramelizado: Sofreí la cebolla con salsa de soja y vinagre balsámico hasta caramelizar.", "Aromatizado: Agregá el ajo y sofreí brevemente.", "Sofreír: Agregá el brócoli y sofreí por algunos minutos.", "Integración: Apagá el fuego, incorporá la lenteja y los demás ingredientes."]
+            },
+            "ensalada-tropical": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Tropical",
+                descripcion: "Ligera y festiva, donde el mango y el palmito se llevan todo el protagonismo.",
+                imagen: "grupo_rápidas/img/tropical.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/tropical_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/tropical_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/tropical_instrucciones.mp3"
+                },
+                ingredientes: ["<b>Componentes</b>","Mix de hojas de tu preferencia","Palmito","Mango","Tomates cherry","Nueces de Brasil","<b>Aderezo</b>","3 cucharadas de aceite de oliva","1 cucharada de miel","2 cucharadas de vinagre balsámico","Sal al gusto","Pimienta negra al gusto"],
+                preparacion: ["Base: Mezclá las hojas, el palmito, el mango y los tomates cherry en un tazón.", "Aderezo: En otro recipiente, prepara el aderezo con aceite, miel, vinagre balsámico, sal y pimienta.", "Montaje: Bañá la ensalada con el aderezo y terminá con las nueces de Brasil."]
+            },
+            "ensalada-hojas-verdes": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Hojas Verdes",
+                descripcion: "Una exquisita combinación de hojas texturizadas con la sorpresa dulce de la granada y la manzana.",
+                imagen: "grupo_rápidas/img/hojas.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/hojas_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/hojas_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/hojas_instrucciones.mp3"
+                },
+                ingredientes: ["<b>Componentes</b>","1/2 manojo de lechuga","1/2 manojo de rúcula","1/2 manojo de col rizada","200 gramos de tomate cherry cortado a la mitad","1 manzana rebanada","1 caqui rebanado","Granos de 1 granada","Menta y cilantro al gusto","<b>Aliño</b>","1 vaso de yogur natural (170 gramos)","Mostaza Dijon al gusto","Aceite de oliva al gusto","Jugo de 1 limón","Sal al gusto"],
+                preparacion: ["Base: Mezclá la lechuga, La rúcula, La col rizada, los tomates, la manzana, el caqui y la granada en una fuente.", "Aromatizado: Agregá la menta y el cilantro al gusto.", "Aderezo: En un recipiente aparte, batí el yogur, la mostaza Dijon, el aceite, el jugo de limón y la sal.", "Servicio: Bañá la ensalada con el aderezo y serví de inmediato."]
+            },
+            "ensalada-primavera-sencilla": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Primavera Sencilla",
+                descripcion: "Sin complicaciones, colorida y veloz, ideal como guarnición rápida para cualquier plato fuerte.",
+                imagen: "grupo_rápidas/img/primavera_sencilla.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/primavera_sencilla_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/primavera_sencilla_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/primavera_sencilla_instrucciones.mp3"
+                },
+                ingredientes: ["1 manojo de lechuga romana", "1 manojo de lechuga rizada", "1 taza de tomate cherry (cortados a la mitad)", "1 taza de palmito pupunha cortado", "1 mango picado", "Sal, aceite de oliva y orégano al gusto"],
+                preparacion: ["Base: Mezclá las lechugas romana y rizada con los tomates cherry.", "Integración: Agregá el palmito pupunha y el mango picado.", "Condimentado: Condimentá con sal, aceite de oliva y orégano al gusto."]
+            },
+            "ensalada-trigo-grano": {
+                categoria: "Rápidas",
+                titulo: "Ensalada de Trigo en Grano",
+                descripcion: "Saciante y con un perfil muy mediterráneo gracias al queso fresco, el limón y la rúcula.",
+                imagen: "grupo_rápidas/img/trigo.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/trigo_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/trigo_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/trigo_instrucciones.mp3"
+                },
+                ingredientes: ["1 y 1/2 taza de trigo en grano cocido", "5 tomates cherry cortados en 4 partes", "3 rebanadas de queso fresco cortadas en cubitos", "6 hojas de rúcula cortadas grueso", "Ralladura de 1 limón amarillo", "Jugo de 1/2 limón amarillo", "Sal y pimienta negra al gusto", "Aceite de oliva al gusto"],
+                preparacion: ["Base: Juntá el trigo cocido, los tomates, el queso fresco y la rúcula en una fuente.", "Aromatizado: Agregá la ralladura y el jugo de limón amarillo.", "Condimentado: Condimentá con sal, pimienta negra y aceite de oliva al gusto."]
+            },
+            "ensalada-griega": {
+                categoria: "Rápidas",
+                titulo: "Ensalada Griega",
+                descripcion: "Fresca, icónica y con ese toque crujiente del pepino y el intenso sabor de las aceitunas enteras.",
+                imagen: "grupo_rápidas/img/griega.webp",
+                audios: {
+                    introduccion: "grupo_rápidas/audio/griega_introduccion.mp3",
+                    ingredientes: "grupo_rápidas/audio/griega_ingredientes.mp3",
+                    preparacion: "grupo_rápidas/audio/griega_instrucciones.mp3"
+                },
+                ingredientes: ["2 tomates maduros cortados en cubos medianos", "1 pepino", "1 cebolla pequeña finamente picada", "1/3 de taza de aceitunas enteras", "2 cucharadas de aceite de oliva", "Sal y pimienta al gusto", "Perejil al gusto"],
+                preparacion: ["Preparación de tomate: Acomodá los tomates en un colador con sal para drenar el agua.", "Preparación de pepino: Hacé ranuras en los pepinos con un tenedor y cortalos en trozos medianos.", "Integración: Pasá los tomates y pepinos a un recipiente.", "Montaje: Agregá el resto de los ingredientes y mezcla bien."]
+            }
+        };
+    </script>
+
+    <!-- Constructor de la Pantalla -->
+    <script>
+        const parametrosURL = new URLSearchParams(window.location.search);
+        const idReceta = parametrosURL.get('id');
+        const receta = baseDeDatosRecetas[idReceta];
+
+        if (!receta) {
+            document.getElementById('ui-titulo').innerText = "Receta no encontrada";
+            document.getElementById('ui-descripcion').innerText = "Vuelve al menú principal y selecciona otra opción.";
+        } else {
+            document.title = receta.titulo + " - Recetario";
+            document.getElementById('ui-categoria').innerText = "Recetas " + receta.categoria;
+            document.getElementById('ui-imagen').src = receta.imagen;
+            document.getElementById('ui-titulo').innerText = receta.titulo;
+            document.getElementById('ui-descripcion').innerText = receta.descripcion;
+
+            if(receta.audios) {
+                if(receta.audios.introduccion) {
+                    document.getElementById('audio-intro').src = receta.audios.introduccion;
+                }
+                if(receta.audios.ingredientes) {
+                    document.getElementById('audio-ingredientes').src = receta.audios.ingredientes;
+                    document.getElementById('btn-audio-ingredientes').classList.remove('oculto');
+                }
+                if(receta.audios.aderezo) {
+                    document.getElementById('audio-aderezo').src = receta.audios.aderezo;
+                    document.getElementById('btn-audio-aderezo').classList.remove('oculto');
+                }
+                if(receta.audios.preparacion) {
+                    document.getElementById('audio-preparacion').src = receta.audios.preparacion;
+                    document.getElementById('btn-audio-preparacion').classList.remove('oculto');
+                }
+                if(receta.audios.consejo) {
+                    document.getElementById('audio-consejo').src = receta.audios.consejo;
+                    document.getElementById('btn-audio-consejo').classList.remove('oculto');
+                }
+            }
+
+            const listaIngr = document.getElementById('ui-lista-ingredientes');
+            receta.ingredientes.forEach(ingrediente => {
+                let li = document.createElement('li');
+                // NUEVO: Poner en negrita el texto antes de los dos puntos en ingredientes
+                let ingredienteFormateado = ingrediente.replace(/^(.*?):/, '<strong>$1:</strong>');
+                li.innerHTML = ingredienteFormateado;
+                listaIngr.appendChild(li);
+            });
+
+            if (receta.aderezo && receta.aderezo.length > 0) {
+                document.getElementById('contenedor-aderezo').classList.remove('oculto');
+                const listaAderezo = document.getElementById('ui-lista-aderezo');
+                receta.aderezo.forEach(item => {
+                    let li = document.createElement('li');
+                    // Aplicar la misma regla de negrita para aderezos
+                    let itemFormateado = item.replace(/^(.*?):/, '<strong>$1:</strong>');
+                    li.innerHTML = itemFormateado;
+                    listaAderezo.appendChild(li);
+                });
+            }
+
+            const listaPrep = document.getElementById('ui-lista-preparacion');
+            receta.preparacion.forEach(paso => {
+                let li = document.createElement('li');
+                let pasoFormateado = paso.replace(/^(.*?):/, '<strong>$1:</strong>');
+                li.innerHTML = pasoFormateado;
+                listaPrep.appendChild(li);
+            });
+
+            if (receta.consejo_nutriologa) {
+                document.getElementById('contenedor-consejo').classList.remove('oculto');
+                document.getElementById('ui-texto-consejo').innerText = receta.consejo_nutriologa;
+            }
+
+            // I. Intentar reproducir la introducción automáticamente (Solo la primera vez por receta)
+            window.addEventListener('DOMContentLoaded', () => {
+                const audioIntro = document.getElementById('audio-intro');
+                const claveMemoriaReceta = 'audioReproducido_' + idReceta;
+
+                if(audioIntro.src && !audioIntro.src.endsWith('undefined')) { 
+                    if (!sessionStorage.getItem(claveMemoriaReceta)) {
+                        let promesa = audioIntro.play();
+                        if (promesa !== undefined) {
+                            promesa.then(() => {
+                                audioActual = audioIntro;
+                                sessionStorage.setItem(claveMemoriaReceta, 'true');
+                            }).catch(error => {
+                                console.warn("Autoplay bloqueado. El usuario necesita interactuar.");
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        const botonesAudio = document.querySelectorAll('.control-audio');
+        let audioActual = null; 
+        let botonActual = null; 
+
+        botonesAudio.forEach(boton => {
+            boton.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const audioSeleccionado = document.getElementById(targetId);
+
+                if (audioActual === audioSeleccionado && !audioSeleccionado.paused) {
+                    audioSeleccionado.pause();
+                    this.innerHTML = "▶";
+                    this.classList.remove('playing');
+                    return; 
+                }
+
+                if (audioActual && !audioActual.paused) {
+                    audioActual.pause();
+                    audioActual.currentTime = 0; 
+                    if (botonActual) {
+                        botonActual.innerHTML = "▶";
+                        botonActual.classList.remove('playing');
+                    }
+                }
+
+                audioSeleccionado.play();
+                this.innerHTML = "⏸"; 
+                this.classList.add('playing'); 
+                
+                audioActual = audioSeleccionado;
+                botonActual = this;
+
+                audioSeleccionado.addEventListener('ended', function() {
+                    botonActual.innerHTML = "▶";
+                    botonActual.classList.remove('playing');
+                }, { once: true }); 
+            });
+        });
+    </script>
+</body>
+</html>

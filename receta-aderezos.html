@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receta - Aderezos Irresistibles</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f5;
+      color: #2c3e30;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #ffffff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding-bottom: 40px;
+    }
+
+    .top-bar {
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-image {
+      width: 100%;
+      aspect-ratio: 800 / 500;
+      object-fit: cover;
+      display: block;
+      background-color: #e8f5e9;
+    }
+
+    .content {
+      padding: 20px 22px;
+    }
+
+    h1 {
+      color: #2e7d32;
+      font-size: 1.55rem;
+      line-height: 1.25;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: #5f6f62;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .info-badge {
+      display: inline-block;
+      background-color: #e8f5e9;
+      color: #1b5e20;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+      border: 1px solid #c8e6c9;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      margin-top: 22px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #4caf50;
+    }
+
+    .section-header h2 {
+      font-size: 1.15rem;
+      color: #1f2d22;
+      font-weight: 700;
+    }
+
+    .play-btn {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid #2e7d32;
+      background-color: #f1f8f2;
+      color: #2e7d32;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    .play-btn:hover,
+    .play-btn.playing {
+      background-color: #2e7d32;
+      color: #ffffff;
+    }
+
+    .play-btn:active {
+      transform: scale(0.94);
+    }
+
+    .ingredients-list {
+      list-style: none;
+    }
+
+    .ingredients-list li {
+      padding: 10px 4px;
+      border-bottom: 1px solid #ecefec;
+      font-size: 0.94rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #37473a;
+    }
+
+    .ingredients-list li.group-title {
+      border-bottom: none;
+      padding: 14px 4px 4px;
+      color: #1b5e20;
+      font-size: 0.98rem;
+    }
+
+    .ingredients-list li.group-title:first-child {
+      padding-top: 4px;
+    }
+
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.94rem;
+      line-height: 1.5;
+      color: #37473a;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: #2e7d32;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .not-found {
+      padding: 40px 24px;
+      text-align: center;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="top-bar">
+      <a class="back-link" href="lista-aderezos.html">&#8592; Aderezos Irresistibles</a>
+    </header>
+
+    <div id="recipe-view">
+      <img id="receta-img" class="hero-image" src="" alt="" />
+
+      <div class="content">
+        <h1 id="receta-titulo">Cargando receta...</h1>
+        <p id="receta-intro" class="subtitle"></p>
+        <span id="receta-badge" class="info-badge"></span>
+
+        <div class="section-header">
+          <h2>Ingredientes</h2>
+          <button id="btn-audio-ingredientes" class="play-btn" title="Escuchar ingredientes" aria-label="Escuchar ingredientes">&#9654;</button>
+        </div>
+        <ul id="receta-ingredientes" class="ingredients-list"></ul>
+
+        <div class="section-header">
+          <h2>Modo de Preparación</h2>
+          <button id="btn-audio-instrucciones" class="play-btn" title="Escuchar preparación" aria-label="Escuchar preparación">&#9654;</button>
+        </div>
+        <ol id="receta-pasos" class="steps-list"></ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const IMG_BASE = "grupo_aderezos/img/";
+    const AUDIO_BASE = "grupo_aderezos/audios/";
+
+    const recetasAderezos = {
+      "salsa-pesto": {
+        titulo: "Salsa Pesto",
+        subtitulo: "Clásico italiano intensamente aromático de albahaca fresca, nueces y queso parmesano.",
+        etiqueta: "Conservación: hasta 10 días en refrigeración",
+        imagen: "pesto.webp",
+        audioIntro: "pesto_introduccion.mp3",
+        audioIngredientes: "pesto_ingredientes.mp3",
+        audioInstrucciones: "pesto_instrucciones.mp3",
+        ingredientes: [
+          "4 dientes de ajo",
+          "1 cucharadita de sal",
+          "1 taza de albahaca fresca",
+          "5 unidades de nueces o castañas",
+          "100 g de queso parmesano rallado",
+          "1/2 taza de aceite de oliva",
+          "Pimienta negra al gusto"
+        ],
+        pasos: [
+          "<b>Albahaca:</b> Separa las hojas de albahaca de los tallos.",
+          "<b>Procesado:</b> Procesa todos los ingredientes en la batidora o licuadora.",
+          "<b>Textura:</b> Si es necesario, agrega agua helada gradualmente para facilitar la mezcla.",
+          "<b>Conservación:</b> Almacena en un recipiente de vidrio, cubriendo la superficie con aceite de oliva. Conserva en refrigeración hasta por 10 días."
+        ]
+      },
+
+      "salsa-arabe": {
+        titulo: "Salsa Árabe",
+        subtitulo: "Vinagreta vibrante y refrescante con doble toque de limón, menta picada y lemon pepper.",
+        etiqueta: "Conservación: hasta 7 días en refrigeración",
+        imagen: "arabe.webp",
+        audioIntro: "arabe_introduccion.mp3",
+        audioIngredientes: "arabe_ingredientes.mp3",
+        audioInstrucciones: "arabe_instrucciones.mp3",
+        ingredientes: [
+          "30 ml de aceite de oliva extra virgen",
+          "Jugo de 1 limón taití",
+          "Jugo de 1 limón siciliano",
+          "1 cucharada de postre de sal",
+          "1 cucharada de lemon pepper",
+          "2 cucharadas de menta picada"
+        ],
+        pasos: [
+          "<b>Emulsión:</b> Mezcla todos los ingredientes en un frasco de vidrio tapado y agita enérgicamente hasta homogeneizar.",
+          "<b>Conservación:</b> Conserva en el refrigerador hasta por 7 días y agita antes de servir."
+        ]
+      },
+
+      "yogur-mostaza": {
+        titulo: "Salsa de Yogur con Mostaza",
+        subtitulo: "Aderezo suave y untuoso que equilibra la frescura del yogur natural con la mostaza amarilla.",
+        etiqueta: "Conservación: hasta 3 días en refrigeración",
+        imagen: "yogur_mostaza.webp",
+        audioIntro: "yogur_mostaza_introduccion.mp3",
+        audioIngredientes: "yogur_mostaza_ingredientes.mp3",
+        audioInstrucciones: "yogur_mostaza_instrucciones.mp3",
+        ingredientes: [
+          "1 huevo cocido",
+          "10 ml de jugo de limón",
+          "1 cucharadita de sal",
+          "1 pizca de pimienta negra",
+          "1 diente de ajo pequeño",
+          "25 g de cebolla escaldada en agua caliente",
+          "10 g de mostaza amarilla",
+          "150 ml de aceite de oliva",
+          "65 ml de yogur natural"
+        ],
+        pasos: [
+          "<b>Base:</b> Procesa en la licuadora todos los componentes, con excepción del aceite de oliva y del yogur.",
+          "<b>Emulsión:</b> Agrega el aceite de oliva en hilo continuo, con el aparato encendido, hasta alcanzar cremosidad.",
+          "<b>Yogur:</b> Transfiere a un recipiente e incorpora el yogur delicadamente con un batidor manual.",
+          "<b>Conservación:</b> Conserva en ambiente refrigerado por un máximo de 3 días."
+        ]
+      },
+
+      "salsa-yogur": {
+        titulo: "Salsa de Yogur",
+        subtitulo: "Ligera, cremosa y sumamente versátil, perfumada con ajo machacado y pimienta recién molida.",
+        etiqueta: "Conservación: hasta 3 días en refrigeración",
+        imagen: "yogur.webp",
+        audioIntro: "yogur_introduccion.mp3",
+        audioIngredientes: "yogur_ingredientes.mp3",
+        audioInstrucciones: "yogur_instrucciones.mp3",
+        ingredientes: [
+          "170 g de yogur natural",
+          "2 cucharadas de aceite de oliva",
+          "1 diente de ajo",
+          "Sal al gusto",
+          "Pimienta negra molida al momento (al gusto)"
+        ],
+        pasos: [
+          "<b>Pasta de ajo:</b> Machaca el ajo con una pizca de sal en un mortero hasta obtener una pasta.",
+          "<b>Integración:</b> Agrega el yogur, el aceite de oliva y la pimienta.",
+          "<b>Ajuste:</b> Mezcla bien, prueba y corrige la sal si es necesario.",
+          "<b>Conservación:</b> Mantén en refrigeración hasta el momento del consumo (máximo 3 días)."
+        ]
+      },
+
+      "salsa-caesar": {
+        titulo: "Salsa Caesar con Mayonesa Casera",
+        subtitulo: "El clásico cremoso preparado desde cero con mayonesa casera y doble textura de parmesano.",
+        etiqueta: "Con mayonesa casera · Textura cremosa",
+        imagen: "caesar.webp",
+        audioIntro: "caesar_introduccion.mp3",
+        audioIngredientes: "caesar_ingredientes.mp3",
+        audioInstrucciones: "caesar_instrucciones.mp3",
+        ingredientes: [
+          "<b>Mayonesa Casera</b>",
+          "100 ml de leche descremada o sin lactosa",
+          "200 ml de aceite de oliva o aceite de preferencia",
+          "2 cucharadas de vinagre de manzana",
+          "Sal al gusto",
+          "<b>Salsa Caesar</b>",
+          "1 taza de mayonesa casera",
+          "1/4 de taza de queso parmesano rallado fino",
+          "50 g de queso parmesano en hojuelas",
+          "1 diente de ajo pequeño pelado",
+          "Jugo de 1/2 limón",
+          "3 cucharadas de agua filtrada"
+        ],
+        pasos: [
+          "<b>Mayonesa casera:</b> Procesa la leche, el aceite, el vinagre de manzana y la sal en la batidora o licuadora hasta alcanzar consistencia de crema.",
+          "<b>Pasta de ajo:</b> Machaca el diente de ajo con una pizca de sal usando un mortero hasta obtener una pasta.",
+          "<b>Integración:</b> En un tazón, combina la pasta de ajo, la taza de mayonesa casera, el parmesano rallado fino, el jugo de limón y el agua filtrada. Mezcla bien con una cuchara.",
+          "<b>Ajuste y toque final:</b> Verifica la sal, agrega más agua si deseas una textura más fluida y termina incorporando el queso parmesano en hojuelas."
+        ]
+      },
+
+      "salsa-mostaza": {
+        titulo: "Salsa de Mostaza",
+        subtitulo: "Aderezo con cuerpo y notas frescas aportadas por el jugo y la ralladura de limón siciliano.",
+        etiqueta: "Preparación rápida · Toque cítrico",
+        imagen: "mostaza.webp",
+        audioIntro: "mostaza_introduccion.mp3",
+        audioIngredientes: "mostaza_ingredientes.mp3",
+        audioInstrucciones: "mostaza_instrucciones.mp3",
+        ingredientes: [
+          "3 cucharadas de mostaza amarilla",
+          "1/4 de taza de agua",
+          "5 cucharadas de aceite de oliva",
+          "Limón siciliano: jugo y ralladura al gusto",
+          "Sal al gusto",
+          "Pimienta negra molida al momento (al gusto)"
+        ],
+        pasos: [
+          "<b>Combinación:</b> En un recipiente pequeño, junta el aceite de oliva, el jugo y la ralladura de limón siciliano, la mostaza amarilla, la pimienta, la sal y el agua.",
+          "<b>Emulsión:</b> Revuelve vigorosamente hasta que la mezcla quede homogénea y con cuerpo."
+        ]
+      },
+
+      "shoyu-light": {
+        titulo: "Salsa Shoyu Light",
+        subtitulo: "Aderezo ligero de inspiración oriental ideal para ensaladas crujientes y vegetales.",
+        etiqueta: "Estilo oriental · Lista en 2 minutos",
+        imagen: "shoyu_light.webp",
+        audioIntro: "shoyu_light_introduccion.mp3",
+        audioIngredientes: "shoyu_light_ingredientes.mp3",
+        audioInstrucciones: "shoyu_light_instrucciones.mp3",
+        ingredientes: [
+          "4 cucharadas de shoyu light (salsa de soja ligera)",
+          "5 cucharadas de aceite de oliva",
+          "4 cucharadas de vinagre blanco",
+          "1/2 cucharadita de sal"
+        ],
+        pasos: [
+          "<b>Integración:</b> Combina el shoyu light, el aceite de oliva y el vinagre blanco en un tazón.",
+          "<b>Sazonado:</b> Sazona con media cucharadita de sal y mezcla muy bien antes de servir."
+        ]
+      },
+
+      "vinagre-balsamico": {
+        titulo: "Salsa de Vinagre Balsámico",
+        subtitulo: "Reducción rápida y brillante con azúcar demerara para dar un acabado de restaurante.",
+        etiqueta: "Reducción rápida · Cocción en 2 minutos",
+        imagen: "balsamico.webp",
+        audioIntro: "balsamico_introduccion.mp3",
+        audioIngredientes: "balsamico_ingredientes.mp3",
+        audioInstrucciones: "balsamico_instrucciones.mp3",
+        ingredientes: [
+          "1/2 taza de vinagre balsámico",
+          "2 cucharadas de azúcar demerara"
+        ],
+        pasos: [
+          "<b>Inicio:</b> Coloca el vinagre balsámico y el azúcar demerara en una sartén a fuego medio.",
+          "<b>Hervor:</b> En cuanto inicie el hervor, reduce la flama al mínimo.",
+          "<b>Reducción:</b> Cocina por exactamente 2 minutos y deja enfriar para que tome consistencia antes de servir."
+        ]
+      },
+
+      "balsamico-endulzado": {
+        titulo: "Salsa de Vinagre Balsámico Endulzado",
+        subtitulo: "Vinagreta agridulce en frío que equilibra el balsámico con miel y mostaza.",
+        etiqueta: "Sin cocción · Lista en 1 minuto",
+        imagen: "balsamico_endulzado.webp",
+        audioIntro: "balsamico_endulzado_introduccion.mp3",
+        audioIngredientes: "balsamico_endulzado_ingredientes.mp3",
+        audioInstrucciones: "balsamico_endulzado_instrucciones.mp3",
+        ingredientes: [
+          "4 cucharadas de aceite de oliva",
+          "2 cucharadas de miel",
+          "1 cucharada de mostaza",
+          "2 cucharadas de vinagre balsámico"
+        ],
+        pasos: [
+          "<b>Emulsión:</b> Coloca el aceite de oliva, la miel, la mostaza y el vinagre balsámico en un bowl y mezcla enérgicamente hasta integrar."
+        ]
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const receta = recetasAderezos[id];
+
+    let audioActual = null;
+    let botonActual = null;
+
+    function detenerAudioActual() {
+      if (audioActual) {
+        audioActual.pause();
+        audioActual.currentTime = 0;
+      }
+      if (botonActual) {
+        botonActual.innerHTML = "&#9654;";
+        botonActual.classList.remove("playing");
+      }
+    }
+
+    function reproducirConBoton(boton, archivoAudio) {
+      const ruta = AUDIO_BASE + archivoAudio;
+
+      if (botonActual === boton && audioActual) {
+        if (!audioActual.paused) {
+          audioActual.pause();
+          boton.innerHTML = "&#9654;";
+          boton.classList.remove("playing");
+        } else {
+          audioActual.play().then(() => {
+            boton.innerHTML = "&#10074;&#10074;";
+            boton.classList.add("playing");
+          }).catch(() => {
+            boton.innerHTML = "&#9654;";
+            boton.classList.remove("playing");
+            alert("Aún no se encuentra el audio: " + ruta);
+          });
+        }
+        return;
+      }
+
+      detenerAudioActual();
+
+      audioActual = new Audio(ruta);
+      botonActual = boton;
+
+      audioActual.play().then(() => {
+        boton.innerHTML = "&#10074;&#10074;";
+        boton.classList.add("playing");
+      }).catch(() => {
+        boton.innerHTML = "&#9654;";
+        boton.classList.remove("playing");
+        alert("Aún no se encuentra el audio: " + ruta);
+      });
+
+      audioActual.addEventListener("ended", () => {
+        if (botonActual === boton) {
+          boton.innerHTML = "&#9654;";
+          boton.classList.remove("playing");
+        }
+      });
+    }
+
+    function reproducirIntroUnaVez(recetaId, archivoAudio) {
+      const clave = "intro_reproducida_aderezos_" + recetaId;
+      let yaReproducido = false;
+
+      try {
+        yaReproducido = sessionStorage.getItem(clave) === "1";
+      } catch (e) {}
+
+      if (yaReproducido) return;
+
+      const ruta = AUDIO_BASE + archivoAudio;
+      audioActual = new Audio(ruta);
+      botonActual = null;
+
+      audioActual.play().then(() => {
+        try {
+          sessionStorage.setItem(clave, "1");
+        } catch (e) {}
+      }).catch(() => {});
+    }
+
+    if (!receta) {
+      document.getElementById("recipe-view").innerHTML =
+        '<div class="not-found"><h2>Receta no encontrada</h2><p>Vuelve al menú para seleccionar un aderezo.</p></div>';
+    } else {
+      document.title = receta.titulo + " - Recetario";
+      document.getElementById("receta-titulo").textContent = receta.titulo;
+      document.getElementById("receta-intro").textContent = receta.subtitulo;
+      document.getElementById("receta-badge").textContent = receta.etiqueta;
+
+      const img = document.getElementById("receta-img");
+      img.src = IMG_BASE + receta.imagen;
+      img.alt = receta.titulo;
+
+      const listaIng = document.getElementById("receta-ingredientes");
+      receta.ingredientes.forEach((item) => {
+        const li = document.createElement("li");
+        if (item.trim().startsWith("<b>")) {
+          li.className = "group-title";
+          li.innerHTML = item;
+        } else {
+          li.innerHTML = "<span>&#129348;</span><span>" + item + "</span>";
+        }
+        listaIng.appendChild(li);
+      });
+
+      const listaPasos = document.getElementById("receta-pasos");
+      receta.pasos.forEach((paso, index) => {
+        const li = document.createElement("li");
+        li.innerHTML =
+          '<span class="step-number">' +
+          (index + 1) +
+          "</span><span>" +
+          paso +
+          "</span>";
+        listaPasos.appendChild(li);
+      });
+
+      document.getElementById("btn-audio-ingredientes").addEventListener("click", function () {
+        reproducirConBoton(this, receta.audioIngredientes);
+      });
+
+      document.getElementById("btn-audio-instrucciones").addEventListener("click", function () {
+        reproducirConBoton(this, receta.audioInstrucciones);
+      });
+
+      // Reproducción automática de la introducción solo la primera vez que se abre este aderezo
+      reproducirIntroUnaVez(id, receta.audioIntro);
+    }
+  </script>
+</body>
+</html>

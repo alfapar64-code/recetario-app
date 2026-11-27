@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receta - Ensaladas para Diabéticos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f5;
+      color: #2c3e30;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #ffffff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding-bottom: 40px;
+    }
+
+    .top-bar {
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 15px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-image {
+      width: 100%;
+      aspect-ratio: 800 / 500;
+      object-fit: cover;
+      display: block;
+      background-color: #e8f5e9;
+    }
+
+    .content {
+      padding: 20px 22px;
+    }
+
+    h1 {
+      color: #2e7d32;
+      font-size: 1.55rem;
+      line-height: 1.25;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: #5f6f62;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .glycemic-badge {
+      display: inline-block;
+      background-color: #e8f5e9;
+      color: #1b5e20;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+      border: 1px solid #c8e6c9;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      margin-top: 22px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #4caf50;
+    }
+
+    .section-header h2 {
+      font-size: 1.15rem;
+      color: #1f2d22;
+      font-weight: 700;
+    }
+
+    .play-btn {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid #2e7d32;
+      background-color: #f1f8f2;
+      color: #2e7d32;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    .play-btn:hover,
+    .play-btn.playing {
+      background-color: #2e7d32;
+      color: #ffffff;
+    }
+
+    .play-btn:active {
+      transform: scale(0.94);
+    }
+
+    .ingredients-list {
+      list-style: none;
+    }
+
+    .ingredients-list li {
+      padding: 10px 4px;
+      border-bottom: 1px solid #ecefec;
+      font-size: 0.94rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #37473a;
+    }
+
+    .ingredients-list li.group-title {
+      border-bottom: none;
+      padding: 14px 4px 4px;
+      color: #1b5e20;
+      font-size: 0.98rem;
+    }
+
+    .ingredients-list li.group-title:first-child {
+      padding-top: 4px;
+    }
+
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.94rem;
+      line-height: 1.5;
+      color: #37473a;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: #2e7d32;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .not-found {
+      padding: 40px 24px;
+      text-align: center;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="top-bar">
+      <a class="back-link" href="lista-diabeticos.html">&#8592; Ensaladas para Diabéticos</a>
+    </header>
+
+    <div id="recipe-view">
+      <img id="receta-img" class="hero-image" src="" alt="" />
+
+      <div class="content">
+        <h1 id="receta-titulo">Cargando receta...</h1>
+        <p id="receta-intro" class="subtitle"></p>
+        <span class="glycemic-badge">Sin azúcar añadida · Índice glucémico bajo</span>
+
+        <div class="section-header">
+          <h2>Ingredientes</h2>
+          <button id="btn-audio-ingredientes" class="play-btn" title="Escuchar ingredientes" aria-label="Escuchar ingredientes">&#9654;</button>
+        </div>
+        <ul id="receta-ingredientes" class="ingredients-list"></ul>
+
+        <div class="section-header">
+          <h2>Modo de Preparación</h2>
+          <button id="btn-audio-instrucciones" class="play-btn" title="Escuchar preparación" aria-label="Escuchar preparación">&#9654;</button>
+        </div>
+        <ol id="receta-pasos" class="steps-list"></ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const IMG_BASE = "grupo_diabeticos/img/";
+    const AUDIO_BASE = "grupo_diabeticos/audio/";
+
+    const recetasDiabeticos = {
+          "cesar-fit": {
+                "titulo": "Ensalada César Fit",
+                "subtitulo": "Versión ligera de todo un clásico, con pollo asado jugoso y un aderezo fresco de limón y mostaza Dijon.",
+                "imagen": "cesar_fit.webp",
+                "audioIntro": "cesar_fit_introduccion.mp3",
+                "audioIngredientes": "cesar_fit_ingredientes.mp3",
+                "audioInstrucciones": "cesar_fit_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "Pollo a la parrilla en tiras",
+                      "Lechuga romana",
+                      "Queso parmesano rallado",
+                      "<b>Aderezo</b>",
+                      "Aceite de oliva",
+                      "Jugo de limón",
+                      "Mostaza Dijon",
+                      "Ajo picado",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Pollo:</b> Sazona el pollo con sal, pimienta y ajo picado, y ásalo a la parrilla hasta dorar.",
+                      "<b>Base:</b> Desinfecta y trocea la lechuga romana.",
+                      "<b>Aderezo:</b> Mezcla muy bien el aceite de oliva, el jugo de limón y la mostaza Dijon.",
+                      "<b>Montaje:</b> Arma la ensalada, baña con el aderezo y termina con queso parmesano rallado."
+                ]
+          },
+          "pollo-aguacate": {
+                "titulo": "Bowl de Pollo, Rúcula y Aguacate",
+                "subtitulo": "Bowl completo, rico en proteínas y grasas saludables sobre una base fresca de rúcula con limón.",
+                "imagen": "pollo_aguacate.webp",
+                "audioIntro": "pollo_aguacate_introduccion.mp3",
+                "audioIngredientes": "pollo_aguacate_ingredientes.mp3",
+                "audioInstrucciones": "pollo_aguacate_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "1 pechuga de pollo asada y deshebrada",
+                      "1/2 aguacate en cubos",
+                      "Rúcula al gusto",
+                      "Tomates cherry",
+                      "1/2 zanahoria rallada",
+                      "Aceituna negra",
+                      "<b>Aderezo</b>",
+                      "Jugo de 1 limón",
+                      "Aceite de oliva",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Proteína:</b> Asa la pechuga de pollo y deshébrala.",
+                      "<b>Corte:</b> Corta el aguacate en cubos y los tomates cherry a la mitad.",
+                      "<b>Montaje:</b> Arma una base de rúcula y agrega el pollo, el aguacate, los tomates, la zanahoria rallada y las aceitunas negras.",
+                      "<b>Aderezo:</b> Sazona con jugo de limón, aceite de oliva, sal y pimienta antes de servir."
+                ]
+          },
+          "griega-feta": {
+                "titulo": "Ensalada Griega con Queso Feta",
+                "subtitulo": "Todo el frescor del Mediterráneo en un plato rápido, crujiente y enriquecido con queso feta y orégano.",
+                "imagen": "griega_feta.webp",
+                "audioIntro": "griega_feta_introduccion.mp3",
+                "audioIngredientes": "griega_feta_ingredientes.mp3",
+                "audioInstrucciones": "griega_feta_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "2 tomates maduros en cubos",
+                      "1 pepino en rodajas",
+                      "1/2 cebolla morada en rebanadas",
+                      "Aceitunas negras",
+                      "80 g de queso feta o requesón",
+                      "<b>Aderezo</b>",
+                      "Orégano",
+                      "Aceite de oliva",
+                      "Jugo de limón",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Vegetales:</b> Corta todas las verduras y combínalas en un platón.",
+                      "<b>Integración:</b> Agrega el queso feta o requesón desmoronado junto con las aceitunas negras.",
+                      "<b>Condimentado:</b> Sazona de manera pareja con aceite de oliva, jugo de limón, orégano, sal y pimienta."
+                ]
+          },
+          "salmon-parrilla": {
+                "titulo": "Ensalada de Salmón a la Parrilla",
+                "subtitulo": "Plato principal sofisticado, rico en omega 3, con el toque aromático del eneldo y las alcaparras.",
+                "imagen": "salmon_parrilla.webp",
+                "audioIntro": "salmon_parrilla_introduccion.mp3",
+                "audioIngredientes": "salmon_parrilla_ingredientes.mp3",
+                "audioInstrucciones": "salmon_parrilla_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "200 g de filete de salmón",
+                      "Mezcla de hojas verdes",
+                      "Tomates cherry",
+                      "1/2 pepino",
+                      "Alcaparras",
+                      "<b>Aderezo</b>",
+                      "Jugo de limón amarillo",
+                      "Aceite de oliva",
+                      "Sal",
+                      "Pimienta",
+                      "Eneldo"
+                ],
+                "pasos": [
+                      "<b>Salmón:</b> Sazona el salmón con sal, pimienta, un toque de eneldo y jugo de limón amarillo, y ásalo 4 minutos de cada lado.",
+                      "<b>Base:</b> Arma en un plato la mezcla de hojas verdes junto con el pepino y los tomates cherry.",
+                      "<b>Toque final:</b> Coloca el salmón encima y termina con alcaparras, eneldo y aceite de oliva."
+                ]
+          },
+          "atun-pepino": {
+                "titulo": "Ensalada de Atún con Pepino",
+                "subtitulo": "Súper práctica, refrescante y libre de almidones pesados para resolver un almuerzo nutritivo.",
+                "imagen": "atun_pepino.webp",
+                "audioIntro": "atun_pepino_introduccion.mp3",
+                "audioIngredientes": "atun_pepino_ingredientes.mp3",
+                "audioInstrucciones": "atun_pepino_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "1 lata de atún en agua escurrido",
+                      "1 pepino japonés en cubos",
+                      "1/2 cebolla morada picada",
+                      "Tomates cherry",
+                      "Aceitunas negras",
+                      "Perejil",
+                      "<b>Aderezo</b>",
+                      "Jugo de limón",
+                      "Aceite de oliva",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Preparación:</b> Escurre muy bien el atún y pica el pepino, la cebolla morada y los tomates cherry.",
+                      "<b>Integración:</b> Combina todos los componentes en un tazón junto con las aceitunas negras.",
+                      "<b>Aderezo:</b> Sazona con jugo de limón, aceite de oliva, sal y pimienta, y termina con perejil fresco."
+                ]
+          },
+          "garbanzo-curcuma": {
+                "titulo": "Ensalada de Garbanzo y Espinaca con Cúrcuma",
+                "subtitulo": "Perfil mediterráneo cargado de fibra, proteína vegetal y el toque antioxidante de la cúrcuma y el limón.",
+                "imagen": "garbanzo_curcuma.webp",
+                "audioIntro": "garbanzo_curcuma_introduccion.mp3",
+                "audioIngredientes": "garbanzo_curcuma_ingredientes.mp3",
+                "audioInstrucciones": "garbanzo_curcuma_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "200 g de garbanzo cocido",
+                      "Espinaca baby al gusto",
+                      "1/2 cebolla morada",
+                      "1 tomate picado",
+                      "Perejil picado",
+                      "<b>Aderezo</b>",
+                      "2 cucharadas de aceite de oliva",
+                      "Jugo de 1 limón",
+                      "1 cucharadita de cúrcuma",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Garbanzos:</b> Cuece los garbanzos y escúrrelos bien.",
+                      "<b>Vegetales:</b> Pica la cebolla morada, el tomate y el perejil, y mézclalos en un tazón junto con los garbanzos y la espinaca baby.",
+                      "<b>Aderezo:</b> Combina el aceite de oliva, el jugo de limón, la cúrcuma, la sal y la pimienta.",
+                      "<b>Servicio:</b> Sazona toda la ensalada con esta mezcla y sirve."
+                ]
+          },
+          "huevos-espinaca": {
+                "titulo": "Ensalada de Huevos con Espinaca",
+                "subtitulo": "Sencilla, muy proteica y realzada con una vinagreta clásica de mostaza Dijon y limón.",
+                "imagen": "huevos_espinaca.webp",
+                "audioIntro": "huevos_espinaca_introduccion.mp3",
+                "audioIngredientes": "huevos_espinaca_ingredientes.mp3",
+                "audioInstrucciones": "huevos_espinaca_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "3 huevos cocidos en rebanadas",
+                      "Espinaca baby al gusto",
+                      "Tomates cherry",
+                      "1/2 cebolla morada",
+                      "<b>Aderezo</b>",
+                      "2 cucharadas de aceite de oliva",
+                      "1 cucharadita de mostaza Dijon",
+                      "Jugo de 1 limón",
+                      "Sal y pimienta negra"
+                ],
+                "pasos": [
+                      "<b>Huevos:</b> Cuece los huevos durante 10 minutos, pélalos y córtalos en rebanadas.",
+                      "<b>Base:</b> Desinfecta la espinaca baby y arma la base en un plato hondo.",
+                      "<b>Montaje:</b> Coloca encima los huevos, los tomates cherry y la cebolla morada.",
+                      "<b>Aderezo:</b> Mezcla el aceite de oliva, la mostaza Dijon, el jugo de limón, la sal y la pimienta negra. Rocía y sirve."
+                ]
+          },
+          "quinoa-verduras": {
+                "titulo": "Ensalada de Quinoa con Verduras",
+                "subtitulo": "Nutritiva, colorida y llena de vegetales asados con un toque ahumado delicioso.",
+                "imagen": "quinoa_verduras.webp",
+                "audioIntro": "quinoa_verduras_introduccion.mp3",
+                "audioIngredientes": "quinoa_verduras_ingredientes.mp3",
+                "audioInstrucciones": "quinoa_verduras_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "1 taza de quinoa cocida",
+                      "1/2 calabacita en cubos asada",
+                      "1/2 pimiento rojo asado",
+                      "Tomates cherry",
+                      "1/2 cebolla morada",
+                      "Perejil",
+                      "<b>Aderezo</b>",
+                      "2 cucharadas de aceite de oliva",
+                      "Jugo de limón",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Quinoa:</b> Cuece la quinoa y resérvala.",
+                      "<b>Asado:</b> Asa la calabacita en cubos y el pimiento rojo hasta dorar ligeramente.",
+                      "<b>Integración:</b> Combina todo en un tazón junto con los tomates cherry y la cebolla morada.",
+                      "<b>Aderezo:</b> Sazona con aceite de oliva, jugo de limón, sal y pimienta, y termina con perejil fresco."
+                ]
+          },
+          "pepino-yogur": {
+                "titulo": "Ensalada de Pepino con Yogur y Menta",
+                "subtitulo": "Cremosa, ligera y sumamente refrescante para servir bien fría.",
+                "imagen": "pepino_yogur.webp",
+                "audioIntro": "pepino_yogur_introduccion.mp3",
+                "audioIngredientes": "pepino_yogur_ingredientes.mp3",
+                "audioInstrucciones": "pepino_yogur_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "2 pepinos japoneses en rebanadas",
+                      "Menta fresca picada",
+                      "<b>Aderezo</b>",
+                      "1/2 taza de yogur natural entero",
+                      "1 diente de ajo machacado",
+                      "Jugo de 1/2 limón",
+                      "1 cucharada de aceite de oliva",
+                      "Sal y pimienta negra"
+                ],
+                "pasos": [
+                      "<b>Corte:</b> Rebana los pepinos japoneses finamente.",
+                      "<b>Aderezo:</b> Mezcla el yogur natural entero con el ajo machacado, el jugo de medio limón, el aceite de oliva y la sal.",
+                      "<b>Integración:</b> Combina el pepino con el aderezo de yogur.",
+                      "<b>Servicio:</b> Termina con menta fresca picada y pimienta negra, y sirve frío."
+                ]
+          },
+          "rucula-nueces": {
+                "titulo": "Ensalada de Rúcula con Nueces y Parmesano",
+                "subtitulo": "Elegante, crujiente y lista en cinco minutos con nueces tostadas y lajas de parmesano.",
+                "imagen": "rucula_nueces.webp",
+                "audioIntro": "rucula_nueces_introduccion.mp3",
+                "audioIngredientes": "rucula_nueces_ingredientes.mp3",
+                "audioInstrucciones": "rucula_nueces_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "1 manojo de rúcula",
+                      "50 g de nueces tostadas picadas grueso",
+                      "40 g de queso parmesano en lajas",
+                      "Tomates cherry",
+                      "<b>Aderezo</b>",
+                      "3 cucharadas de aceite de oliva extra virgen",
+                      "Jugo de 1 limón amarillo",
+                      "Sal y pimienta negra"
+                ],
+                "pasos": [
+                      "<b>Base:</b> Desinfecta la rúcula, sécala bien y acomódala en un platón amplio.",
+                      "<b>Integración:</b> Corta los tomates cherry a la mitad y agrégalos junto con las nueces tostadas.",
+                      "<b>Toque final:</b> Corona con las lajas de parmesano y sazona con aceite de oliva extra virgen, jugo de limón amarillo, sal y pimienta negra."
+                ]
+          },
+          "lenteja-zanahoria": {
+                "titulo": "Ensalada de Lenteja con Zanahoria Asada",
+                "subtitulo": "Saciante, reconfortante y perfumada con comino, ideal para disfrutar tibia o fría.",
+                "imagen": "lenteja_zanahoria.webp",
+                "audioIntro": "lenteja_zanahoria_introduccion.mp3",
+                "audioIngredientes": "lenteja_zanahoria_ingredientes.mp3",
+                "audioInstrucciones": "lenteja_zanahoria_instrucciones.mp3",
+                "ingredientes": [
+                      "<b>Componentes</b>",
+                      "1 taza de lenteja verde cocida al dente",
+                      "2 zanahorias medianas en rodajas asadas",
+                      "1/2 cebolla morada",
+                      "Perejil y cebollín",
+                      "<b>Aderezo</b>",
+                      "2 cucharadas de aceite de oliva",
+                      "1 cucharada de vinagre de manzana",
+                      "1 cucharadita de comino",
+                      "Sal y pimienta"
+                ],
+                "pasos": [
+                      "<b>Lentejas:</b> Cuece la lenteja verde al dente y escúrrela bien.",
+                      "<b>Zanahorias:</b> Sazona las rodajas de zanahoria con aceite de oliva y comino, y hornéalas a 200 °C por 25 minutos.",
+                      "<b>Integración:</b> Mezcla la lenteja con las zanahorias asadas y la cebolla morada.",
+                      "<b>Aderezo:</b> Sazona con aceite de oliva, vinagre de manzana, sal y pimienta, y termina con perejil y cebollín."
+                ]
+          }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const receta = recetasDiabeticos[id];
+
+    let audioActual = null;
+    let botonActual = null;
+
+    function detenerAudioActual() {
+      if (audioActual) {
+        audioActual.pause();
+        audioActual.currentTime = 0;
+      }
+      if (botonActual) {
+        botonActual.innerHTML = "&#9654;";
+        botonActual.classList.remove("playing");
+      }
+    }
+
+    function reproducirConBoton(boton, archivoAudio) {
+      const ruta = AUDIO_BASE + archivoAudio;
+
+      if (botonActual === boton && audioActual) {
+        if (!audioActual.paused) {
+          audioActual.pause();
+          boton.innerHTML = "&#9654;";
+          boton.classList.remove("playing");
+        } else {
+          audioActual.play().then(() => {
+            boton.innerHTML = "&#10074;&#10074;";
+            boton.classList.add("playing");
+          }).catch(() => {
+            boton.innerHTML = "&#9654;";
+            boton.classList.remove("playing");
+            alert("Aún no se encuentra el audio: " + ruta);
+          });
+        }
+        return;
+      }
+
+      detenerAudioActual();
+
+      audioActual = new Audio(ruta);
+      botonActual = boton;
+
+      audioActual.play().then(() => {
+        boton.innerHTML = "&#10074;&#10074;";
+        boton.classList.add("playing");
+      }).catch(() => {
+        boton.innerHTML = "&#9654;";
+        boton.classList.remove("playing");
+        alert("Aún no se encuentra el audio: " + ruta);
+      });
+
+      audioActual.addEventListener("ended", () => {
+        if (botonActual === boton) {
+          boton.innerHTML = "&#9654;";
+          boton.classList.remove("playing");
+        }
+      });
+    }
+
+    function reproducirIntroUnaVez(recetaId, archivoAudio) {
+      const clave = "intro_reproducida_diabeticos_" + recetaId;
+      let yaReproducido = false;
+
+      try {
+        yaReproducido = sessionStorage.getItem(clave) === "1";
+      } catch (e) {}
+
+      if (yaReproducido) return;
+
+      const ruta = AUDIO_BASE + archivoAudio;
+      audioActual = new Audio(ruta);
+      botonActual = null;
+
+      audioActual.play().then(() => {
+        try {
+          sessionStorage.setItem(clave, "1");
+        } catch (e) {}
+      }).catch(() => {});
+    }
+
+    if (!receta) {
+      document.getElementById("recipe-view").innerHTML =
+        '<div class="not-found"><h2>Receta no encontrada</h2><p>Vuelve al menú para seleccionar una ensalada.</p></div>';
+    } else {
+      document.title = receta.titulo + " - Recetario";
+      document.getElementById("receta-titulo").textContent = receta.titulo;
+      document.getElementById("receta-intro").textContent = receta.subtitulo;
+
+      const img = document.getElementById("receta-img");
+      img.src = IMG_BASE + receta.imagen;
+      img.alt = receta.titulo;
+
+      const listaIng = document.getElementById("receta-ingredientes");
+      receta.ingredientes.forEach((item) => {
+        const li = document.createElement("li");
+        if (item.trim().startsWith("<b>")) {
+          li.className = "group-title";
+          li.innerHTML = item;
+        } else {
+          li.innerHTML = "<span>&#129367;</span><span>" + item + "</span>";
+        }
+        listaIng.appendChild(li);
+      });
+
+      const listaPasos = document.getElementById("receta-pasos");
+      receta.pasos.forEach((paso, index) => {
+        const li = document.createElement("li");
+        li.innerHTML =
+          '<span class="step-number">' +
+          (index + 1) +
+          "</span><span>" +
+          paso +
+          "</span>";
+        listaPasos.appendChild(li);
+      });
+
+      document.getElementById("btn-audio-ingredientes").addEventListener("click", function () {
+        reproducirConBoton(this, receta.audioIngredientes);
+      });
+
+      document.getElementById("btn-audio-instrucciones").addEventListener("click", function () {
+        reproducirConBoton(this, receta.audioInstrucciones);
+      });
+
+      // Reproducción automática de la introducción solo la primera vez que se abre esta receta
+      reproducirIntroUnaVez(id, receta.audioIntro);
+    }
+  </script>
+</body>
+</html>

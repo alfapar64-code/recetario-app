@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aderezos Irresistibles - Recetario</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f5;
+      color: #2c3e30;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #f9fbf9;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding-bottom: 32px;
+    }
+
+    .top-bar {
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 2px 6px 2px 0;
+    }
+
+    .top-bar h1 {
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .intro-card {
+      margin: 16px 16px 8px;
+      background-color: #edf7ee;
+      border: 1px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    .intro-text h2 {
+      font-size: 0.98rem;
+      color: #1b5e20;
+      margin-bottom: 4px;
+    }
+
+    .intro-text p {
+      font-size: 0.85rem;
+      color: #466048;
+      line-height: 1.4;
+    }
+
+    .recipe-list {
+      padding: 8px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .recipe-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.14);
+    }
+
+    .recipe-thumb {
+      width: 68px;
+      height: 68px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background-color: #e8f5e9;
+    }
+
+    .recipe-info h3 {
+      font-size: 1rem;
+      color: #2e7d32;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .recipe-info p {
+      font-size: 0.85rem;
+      color: #667568;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="top-bar">
+      <a class="back-link" href="index.html" aria-label="Volver al inicio">&#8592;</a>
+      <h1>Aderezos Irresistibles</h1>
+    </header>
+
+    <section class="intro-card">
+      <div class="intro-text">
+        <h2>Secretos del Chef · Salsas Casero-Gourmet</h2>
+        <p>Transforma cualquier ensalada en una experiencia inolvidable con aderezos frescos, cremosos y rápidos.</p>
+      </div>
+    </section>
+
+    <main class="recipe-list">
+      <a class="recipe-card" href="receta-aderezos.html?id=salsa-pesto">
+        <img class="recipe-thumb" src="grupo_aderezos/img/pesto.webp" alt="Salsa Pesto" />
+        <div class="recipe-info">
+          <h3>Salsa Pesto</h3>
+          <p>Albahaca fresca, nueces, parmesano y aceite de oliva</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=salsa-arabe">
+        <img class="recipe-thumb" src="grupo_aderezos/img/arabe.webp" alt="Salsa Árabe" />
+        <div class="recipe-info">
+          <h3>Salsa Árabe</h3>
+          <p>Doble toque de limón, menta picada y lemon pepper</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=yogur-mostaza">
+        <img class="recipe-thumb" src="grupo_aderezos/img/yogur_mostaza.webp" alt="Salsa de Yogur con Mostaza" />
+        <div class="recipe-info">
+          <h3>Salsa de Yogur con Mostaza</h3>
+          <p>Emulsión cremosa con yogur natural y mostaza amarilla</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=salsa-yogur">
+        <img class="recipe-thumb" src="grupo_aderezos/img/yogur.webp" alt="Salsa de Yogur" />
+        <div class="recipe-info">
+          <h3>Salsa de Yogur</h3>
+          <p>Ligera y versátil con ajo machacado y aceite de oliva</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=salsa-caesar">
+        <img class="recipe-thumb" src="grupo_aderezos/img/caesar.webp" alt="Salsa Caesar con Mayonesa Casera" />
+        <div class="recipe-info">
+          <h3>Salsa Caesar con Mayonesa Casera</h3>
+          <p>Clásica y aterciopelada con doble textura de parmesano</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=salsa-mostaza">
+        <img class="recipe-thumb" src="grupo_aderezos/img/mostaza.webp" alt="Salsa de Mostaza" />
+        <div class="recipe-info">
+          <h3>Salsa de Mostaza</h3>
+          <p>Con cuerpo, pimienta recién molida y limón siciliano</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=shoyu-light">
+        <img class="recipe-thumb" src="grupo_aderezos/img/shoyu_light.webp" alt="Salsa Shoyu Light" />
+        <div class="recipe-info">
+          <h3>Salsa Shoyu Light</h3>
+          <p>Toque oriental ligero con salsa de soja y vinagre blanco</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=vinagre-balsamico">
+        <img class="recipe-thumb" src="grupo_aderezos/img/balsamico.webp" alt="Salsa de Vinagre Balsámico" />
+        <div class="recipe-info">
+          <h3>Salsa de Vinagre Balsámico</h3>
+          <p>Reducción brillante en 2 minutos con azúcar demerara</p>
+        </div>
+      </a>
+
+      <a class="recipe-card" href="receta-aderezos.html?id=balsamico-endulzado">
+        <img class="recipe-thumb" src="grupo_aderezos/img/balsamico_endulzado.webp" alt="Salsa de Vinagre Balsámico Endulzado" />
+        <div class="recipe-info">
+          <h3>Salsa de Vinagre Balsámico Endulzado</h3>
+          <p>Vinagreta agridulce en frío con miel y mostaza</p>
+        </div>
+      </a>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const CLAVE_INTRO_GRUPO = "intro_reproducida_grupo_aderezos";
+      let yaReproducido = false;
+
+      try {
+        yaReproducido = sessionStorage.getItem(CLAVE_INTRO_GRUPO) === "1";
+      } catch (e) {}
+
+      if (!yaReproducido) {
+        const introAudio = new Audio("grupo_aderezos/audios/aderezos_introduccion.mp3");
+        introAudio.play().then(() => {
+          try {
+            sessionStorage.setItem(CLAVE_INTRO_GRUPO, "1");
+          } catch (e) {}
+        }).catch(() => {});
+      }
+    })();
+  </script>
+</body>
+</html>s

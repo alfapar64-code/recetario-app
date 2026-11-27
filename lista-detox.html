@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ensaladas Detox - Recetario</title>
+    
+    <style>
+        :root {
+            --color-fondo: #f4f7f6;
+            --color-primario: #2e7d32;
+            --color-secundario: #4caf50;
+            --color-texto: #333333;
+            --color-blanco: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--color-fondo); color: var(--color-texto); display: flex; justify-content: center; }
+        
+        .app-container { width: 100%; max-width: 480px; background-color: var(--color-fondo); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        
+        .nav-bar { background-color: var(--color-primario); color: var(--color-blanco); padding: 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .back-btn { color: var(--color-blanco); text-decoration: none; font-size: 1.5rem; margin-right: 15px; }
+        .nav-bar h2 { font-size: 1.2rem; font-weight: 500; }
+
+        .recipe-list { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .recipe-item { background-color: var(--color-blanco); border-radius: 12px; padding: 15px; display: flex; align-items: center; text-decoration: none; color: var(--color-texto); box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.2s; }
+        .recipe-item:hover { transform: translateY(-2px); border-left: 4px solid var(--color-secundario); }
+        
+        .recipe-img-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 15px; background-color: #ddd; }
+        .recipe-info h3 { font-size: 1.1rem; color: var(--color-primario); margin-bottom: 4px; }
+        .recipe-info p { font-size: 0.85rem; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="nav-bar">
+            <a href="index.html" class="back-btn">←</a>
+            <h2>Ensaladas Detox</h2>
+        </header>
+
+        <!-- Audio automático de bienvenida (solo la primera vez) -->
+        <audio id="audio-categoria-detox" src="grupo_detox/audio/grupo_detox_introduccion.mp3" preload="auto"></audio>
+
+        <main class="recipe-list">
+            
+            <a href="receta-plantilla.html?id=ensalada-verano" class="recipe-item">
+                <img src="grupo_detox/img/ensalada-verano.webp" alt="Ensalada Verano" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Verano</h3>
+                    <p>Camarón, mango y aguacate</p>
+                </div>
+            </a>
+
+            <!-- ENLACES ACTIVADOS PARA LAS OTRAS RECETAS -->
+            <a href="receta-plantilla.html?id=ensalada-detox" class="recipe-item">
+                <img src="grupo_detox/img/ensalada_detox.webp" alt="Ensalada Detox" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Detox</h3>
+                    <p>Pollo, pepino y aguacate</p>
+                </div>
+            </a>
+            
+            <a href="receta-plantilla.html?id=ensalada-primavera" class="recipe-item">
+                <img src="grupo_detox/img/ensalada_primavera.webp" alt="Ensalada Primavera" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Primavera</h3>
+                    <p>Col, zanahoria y atún</p>
+                </div>
+            </a>
+
+            <a href="receta-plantilla.html?id=ensalada-italiana" class="recipe-item">
+                <img src="grupo_detox/img/ensalada_italiana.webp" alt="Ensalada Italiana" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Italiana</h3>
+                    <p>Calabacita y codorniz</p>
+                </div>
+            </a>
+
+            <a href="receta-plantilla.html?id=ensalada-garbanzo" class="recipe-item">
+                <img src="grupo_detox/img/ensalada_garbanzo.webp" alt="Ensalada Garbanzo" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Garbanzo</h3>
+                    <p>Garbanzo, brócoli y nueces</p>
+                </div>
+            </a>
+
+        </main>
+    </div>
+
+    <!-- Script de Autoplay inteligente -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const audioBienvenida = document.getElementById('audio-categoria-detox');
+            
+            if (!sessionStorage.getItem('audioDetoxReproducido')) {
+                let promesaReproduccion = audioBienvenida.play();
+
+                if (promesaReproduccion !== undefined) {
+                    promesaReproduccion.then(() => {
+                        sessionStorage.setItem('audioDetoxReproducido', 'true');
+                    }).catch(error => {
+                        console.warn("Autoplay bloqueado. El usuario necesita interactuar primero.");
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

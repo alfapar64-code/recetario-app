@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Rápida - Recetario</title>
+    
+    <style>
+        :root {
+            --color-fondo: #f4f7f6;
+            --color-primario: #2e7d32;
+            --color-secundario: #4caf50;
+            --color-texto: #333333;
+            --color-blanco: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--color-fondo); color: var(--color-texto); display: flex; justify-content: center; }
+        
+        .app-container { width: 100%; max-width: 480px; background-color: var(--color-fondo); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        
+        .nav-bar { background-color: var(--color-primario); color: var(--color-blanco); padding: 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .back-btn { color: var(--color-blanco); text-decoration: none; font-size: 1.5rem; margin-right: 15px; }
+        .nav-bar h2 { font-size: 1.2rem; font-weight: 500; }
+
+        .recipe-list { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .recipe-item { background-color: var(--color-blanco); border-radius: 12px; padding: 15px; display: flex; align-items: center; text-decoration: none; color: var(--color-texto); box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.2s; }
+        .recipe-item:hover { transform: translateY(-2px); border-left: 4px solid var(--color-secundario); }
+        
+        .recipe-img-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 15px; background-color: #ddd; }
+        .recipe-info h3 { font-size: 1.1rem; color: var(--color-primario); margin-bottom: 4px; }
+        .recipe-info p { font-size: 0.85rem; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="nav-bar">
+            <a href="index.html" class="back-btn">←</a>
+            <h2>Guía Rápida</h2>
+        </header>
+
+        <!-- Audio automático de bienvenida al menú (solo la primera vez) -->
+        <audio id="audio-categoria-rapidas" src="grupo_rápidas/audio/rapidas_introduccion.mp3" preload="auto"></audio>
+
+        <main class="recipe-list">
+            
+            <a href="receta-plantilla.html?id=ensalada-cesar" class="recipe-item">
+                <img src="grupo_rápidas/img/cesar.webp" alt="Ensalada César" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada César</h3>
+                    <p>Clásica y deliciosa con pollo y crutones</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=carne-asada" class="recipe-item">
+                <img src="grupo_rápidas/img/asada.webp" alt="Carne Asada" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Carne Asada</h3>
+                    <p>Osobuco deshilachado súper sabroso</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-calabaza-azul" class="recipe-item">
+                <img src="grupo_rápidas/img/azul.webp" alt="Calabaza con Queso Azul" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Calabaza con Queso Azul</h3>
+                    <p>Contraste dulce y salado perfecto</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-loto-pollo" class="recipe-item">
+                <img src="grupo_rápidas/img/loto.webp" alt="Ensalada Loto de Pollo" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Loto de Pollo</h3>
+                    <p>Explosión asiática de texturas</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=salpicon-figfit" class="recipe-item">
+                <img src="grupo_rápidas/img/salpicon.webp" alt="Salpicón FIGFIT" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Salpicón FIGFIT</h3>
+                    <p>Proteínas, pastas ligeras y vegetales</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=chips-batata" class="recipe-item">
+                <img src="grupo_rápidas/img/batata.webp" alt="Chips de Batata" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Chips de Batata</h3>
+                    <p>Finas, crujientes y ahumadas</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-light" class="recipe-item">
+                <img src="grupo_rápidas/img/light.webp" alt="Ensalada LIGHT" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada LIGHT</h3>
+                    <p>Salmón asado al romero y hojas verdes</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-repollo" class="recipe-item">
+                <img src="grupo_rápidas/img/repollo.webp" alt="Ensalada de Repollo Cremosa" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Repollo Cremosa</h3>
+                    <p>Refrescante coleslaw vegano</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-zanahoria" class="recipe-item">
+                <img src="grupo_rápidas/img/zanahoria.webp" alt="Ensalada Cruda de Zanahoria" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Cruda de Zanahoria</h3>
+                    <p>Práctica, luminosa y marinada</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-repollo-colorado" class="recipe-item">
+                <img src="grupo_rápidas/img/colorida.webp" alt="Colorida de Repollo Colorado" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Colorida de Repollo Colorado</h3>
+                    <p>Festival crujiente con semillas</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-papa-atun" class="recipe-item">
+                <img src="grupo_rápidas/img/atun.webp" alt="Ensalada de Papa con Atún" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Papa con Atún</h3>
+                    <p>Clásico rápido y muy saciante</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-parma" class="recipe-item">
+                <img src="grupo_rápidas/img/parma.webp" alt="Ensalada con Parma" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada con Parma</h3>
+                    <p>Elegante y fresca con melón</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-kani" class="recipe-item">
+                <img src="grupo_rápidas/img/kani.webp" alt="Ensalada Fresca con KANI" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Fresca con KANI</h3>
+                    <p>Ligera y oriental con aderezo de miel</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-pollo-palta" class="recipe-item">
+                <img src="grupo_rápidas/img/palta.webp" alt="Ensalada de Pollo y Palta" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Pollo y Palta</h3>
+                    <p>Presentación creativa en envase natural</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-portuguesa" class="recipe-item">
+                <img src="grupo_rápidas/img/portuguesa.webp" alt="Ensalada a la Portuguesa" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada a la Portuguesa</h3>
+                    <p>Comida completa con aderezo clásico</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-proteica-garbanzo" class="recipe-item">
+                <img src="grupo_rápidas/img/proteica.webp" alt="Ensalada Proteica de Garbanzo" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Proteica de Garbanzo</h3>
+                    <p>Energía vegetal con perfil oriental</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-palta-choclo" class="recipe-item">
+                <img src="grupo_rápidas/img/choclo.webp" alt="Ensalada de Palta con Choclo" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Palta con Choclo</h3>
+                    <p>Sencilla, colorida y reconfortante</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-waldorf" class="recipe-item">
+                <img src="grupo_rápidas/img/waldorf.webp" alt="Ensalada Waldorf" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Waldorf</h3>
+                    <p>Equilibrio entre manzana y yogur</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-fresh-mango" class="recipe-item">
+                <img src="grupo_rápidas/img/fresh.webp" alt="Ensalada Fresh con Mango" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Fresh con Mango</h3>
+                    <p>Dulce y salada, ideal para acompañar</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-mango" class="recipe-item">
+                <img src="grupo_rápidas/img/mango.webp" alt="Ensalada de Mango" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Mango</h3>
+                    <p>Inspiración tailandesa con salsa de pescado</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-rucula-caprese" class="recipe-item">
+                <img src="grupo_rápidas/img/rucula.webp" alt="Ensalada de Rúcula Caprese" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Rúcula Caprese</h3>
+                    <p>Mozzarella de búfala y pesto casero</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-garbanzo-batata" class="recipe-item">
+                <img src="grupo_rápidas/img/garbanzo.webp" alt="Ensalada de Garbanzo con Batata" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Garbanzo con Batata</h3>
+                    <p>Confortable con toque dulce asado</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-acelga-oriental" class="recipe-item">
+                <img src="grupo_rápidas/img/acelga.webp" alt="Ensalada de Acelga Oriental" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Acelga Oriental</h3>
+                    <p>Salteado rápido digno de restaurante</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-poroto-negro" class="recipe-item">
+                <img src="grupo_rápidas/img/poroto.webp" alt="Ensalada de Poroto Negro" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Poroto Negro</h3>
+                    <p>Energizante inspirada en pico de gallo</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-colorida-palta" class="recipe-item">
+                <img src="grupo_rápidas/img/colorida_palta.webp" alt="Ensalada Colorida con Palta" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Colorida con Palta</h3>
+                    <p>Vinagreta clásica y paleta visual</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-brocoli-lenteja" class="recipe-item">
+                <img src="grupo_rápidas/img/brocoli.webp" alt="Ensalada de Brócoli con Lenteja" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Brócoli con Lenteja</h3>
+                    <p>Tibia, robusta y nutritiva</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-tropical" class="recipe-item">
+                <img src="grupo_rápidas/img/tropical.webp" alt="Ensalada Tropical" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Tropical</h3>
+                    <p>Ligera y festiva con mango y palmito</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-hojas-verdes" class="recipe-item">
+                <img src="grupo_rápidas/img/hojas.webp" alt="Ensalada de Hojas Verdes" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Hojas Verdes</h3>
+                    <p>Texturas con dulce de granada y manzana</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-primavera-sencilla" class="recipe-item">
+                <img src="grupo_rápidas/img/primavera_sencilla.webp" alt="Ensalada Primavera Sencilla" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Primavera Sencilla</h3>
+                    <p>Colorida, veloz y sin complicaciones</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-trigo-grano" class="recipe-item">
+                <img src="grupo_rápidas/img/trigo.webp" alt="Ensalada de Trigo en Grano" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada de Trigo en Grano</h3>
+                    <p>Saciante perfil mediterráneo</p>
+                </div>
+            </a>
+            <a href="receta-plantilla.html?id=ensalada-griega" class="recipe-item">
+                <img src="grupo_rápidas/img/griega.webp" alt="Ensalada Griega" class="recipe-img-thumb">
+                <div class="recipe-info">
+                    <h3>Ensalada Griega</h3>
+                    <p>Fresca, icónica y crujiente</p>
+                </div>
+            </a>
+        </main>
+    </div>
+
+    <!-- Script de Autoplay inteligente -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const audioBienvenida = document.getElementById('audio-categoria-rapidas');
+            
+            if (audioBienvenida && !sessionStorage.getItem('audioRapidasReproducido')) {
+                let promesaReproduccion = audioBienvenida.play();
+
+                if (promesaReproduccion !== undefined) {
+                    promesaReproduccion.then(() => {
+                        sessionStorage.setItem('audioRapidasReproducido', 'true');
+                    }).catch(error => {
+                        console.warn("Autoplay bloqueado por el navegador.");
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

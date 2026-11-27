@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrador - Códigos de Acceso</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f2;
+      color: #263329;
+      min-height: 100vh;
+      padding: 20px 14px 40px;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(27, 94, 32, 0.2);
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      color: #1b5e20;
+      margin-bottom: 14px;
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: 50px auto;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #425346;
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid #cfdcd1;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #2e7d32;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+    }
+
+    .btn-danger {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 8px 14px;
+      font-size: 0.84rem;
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      border-radius: 8px;
+    }
+
+    .error-box {
+      background: #ffebee;
+      color: #c62828;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.84rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .error-box.visible {
+      display: block;
+    }
+
+    .result-box {
+      margin-top: 16px;
+      background: #edf7ee;
+      border: 1.5px solid #a5d6a7;
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+    }
+
+    .result-box.visible {
+      display: block;
+    }
+
+    .big-code {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #1b5e20;
+      margin: 6px 0 12px;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #2e7d32;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: #667568;
+      margin-top: 2px;
+    }
+
+    .code-item {
+      border: 1px solid #e5ece6;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .code-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .code-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .code-text {
+      font-weight: 800;
+      font-size: 1.02rem;
+      letter-spacing: 1px;
+      color: #1f2d22;
+    }
+
+    .badge {
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .badge-disponible { background: #e8f5e9; color: #1b5e20; }
+    .badge-usado { background: #e3f2fd; color: #1565c0; }
+    .badge-expirado { background: #fff3e0; color: #e65100; }
+    .badge-revocado { background: #ffebee; color: #c62828; }
+
+    .code-meta {
+      font-size: 0.8rem;
+      color: #667568;
+      line-height: 1.4;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1b5e20;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 24px;
+      font-size: 0.88rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 300;
+    }
+
+    .toast.visible {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Inicio de Sesión Administrador -->
+    <div id="vista-login" class="card login-box">
+      <h2>Panel Administrador · Recetario</h2>
+      <p style="font-size: 0.86rem; color: #607063; margin-bottom: 16px;">
+        Inicia sesión con tu cuenta de administrador de Firebase para generar y controlar códigos.
+      </p>
+      <div id="login-error" class="error-box"></div>
+      <form id="form-login">
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input id="email" type="email" required placeholder="tu-correo@gmail.com" />
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input id="password" type="password" required placeholder="Tu contraseña" />
+        </div>
+        <button id="btn-login" type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
+      </form>
+    </div>
+
+    <!-- Panel Principal -->
+    <div id="vista-panel" class="hidden">
+      <header class="header">
+        <div>
+          <h1>Generador de Códigos · Recetario Saludable</h1>
+          <p id="admin-email"></p>
+        </div>
+        <button id="btn-logout" class="btn btn-logout">Cerrar sesión</button>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div id="stat-total" class="stat-num">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div id="stat-disponibles" class="stat-num">0</div>
+          <div class="stat-label">Disponibles</div>
+        </div>
+        <div class="stat-card">
+          <div id="stat-usados" class="stat-num">0</div>
+          <div class="stat-label">Usados</div>
+        </div>
+        <div class="stat-card">
+          <div id="stat-inactivos" class="stat-num">0</div>
+          <div class="stat-label">Vencidos / Revocados</div>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Crear Nuevo Código de Un Solo Uso</h2>
+        <div class="field">
+          <label for="app-url">Enlace público de tu aplicación (para el mensaje de WhatsApp)</label>
+          <input id="app-url" type="url" placeholder="https://tu-usuario.github.io/recetario-app/" />
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="nota-usuario">Destinatario o nota (opcional)</label>
+            <input id="nota-usuario" type="text" placeholder="Ej: María Pérez" />
+          </div>
+          <div class="field">
+            <label for="vigencia">Tiempo límite para activarlo</label>
+            <select id="vigencia">
+              <option value="24">Expira en 24 horas (1 solo uso)</option>
+              <option value="48" selected>Expira en 48 horas (1 solo uso)</option>
+              <option value="168">Expira en 7 días (1 solo uso)</option>
+              <option value="720">Expira en 30 días (1 solo uso)</option>
+              <option value="0">Sin fecha de vencimiento (1 solo uso)</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btn-generar" class="btn btn-primary">Generar Código Único</button>
+
+        <div id="result-box" class="result-box">
+          <div style="font-size: 0.84rem; color: #2e7d32; font-weight: 600;">Código generado y guardado:</div>
+          <div id="ultimo-codigo" class="big-code"></div>
+          <div class="actions-row">
+            <button id="btn-copiar-ws" class="btn btn-primary btn-small">Copiar invitación para WhatsApp</button>
+            <button id="btn-copiar-solo" class="btn btn-secondary btn-small">Copiar solo el código</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px;">
+          <h2 style="margin-bottom: 0;">Historial de Códigos</h2>
+          <button id="btn-recargar" class="btn btn-secondary btn-small">Actualizar lista</button>
+        </div>
+        <div id="lista-codigos">Cargando códigos...</div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="seguridad.js"></script>
+
+  <script>
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const vistaLogin = document.getElementById("vista-login");
+    const vistaPanel = document.getElementById("vista-panel");
+    const loginError = document.getElementById("login-error");
+    const adminEmail = document.getElementById("admin-email");
+    const inputUrl = document.getElementById("app-url");
+    const inputNota = document.getElementById("nota-usuario");
+    const selectVigencia = document.getElementById("vigencia");
+    const resultBox = document.getElementById("result-box");
+    const ultimoCodigoEl = document.getElementById("ultimo-codigo");
+    const listaCodigosEl = document.getElementById("lista-codigos");
+    const toastEl = document.getElementById("toast");
+
+    let ultimoCodigoGenerado = "";
+
+    // Detecta automáticamente tu URL de GitHub Pages al abrir admin.html online
+    const urlGuardada = localStorage.getItem("recetario_admin_url");
+    if (urlGuardada) {
+      inputUrl.value = urlGuardada;
+    } else if (location.protocol.startsWith("http")) {
+      inputUrl.value = location.href.replace(/admin\.html.*$/i, "");
+    }
+
+    inputUrl.addEventListener("change", () => {
+      localStorage.setItem("recetario_admin_url", inputUrl.value.trim());
+    });
+
+    function mostrarToast(texto) {
+      toastEl.textContent = texto;
+      toastEl.classList.add("visible");
+      setTimeout(() => toastEl.classList.remove("visible"), 2600);
+    }
+
+    function generarCodigoAleatorio() {
+      const chars = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+      let parte = "";
+      for (let i = 0; i < 6; i++) {
+        parte += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return "SANO-" + parte;
+    }
+
+    function construirMensajeWhatsApp(codigo) {
+      let base = inputUrl.value.trim() || "https://TU-USUARIO.github.io/recetario-app/";
+      if (!base.endsWith("/") && !base.endsWith(".html")) base += "/";
+      const enlaceDirecto = base + "?codigo=" + encodeURIComponent(codigo);
+
+      return [
+        "🥗 *¡Bienvenido/a a Recetario Saludable!*",
+        "",
+        "Aquí tienes tu acceso personal para instalar la aplicación en tu teléfono:",
+        "🔗 *Enlace de acceso:* " + enlaceDirecto,
+        "🔑 *Tu código personal (uso único):* *" + codigo + "*",
+        "",
+        "⚠️ *Importante:* Tu código funciona *una sola vez* y queda vinculado al teléfono donde lo actives. Abre el enlace directamente en *Chrome* (Android) o *Safari* (iPhone).",
+        "",
+        "📱 *Cómo instalar en Android (Chrome):*",
+        "1. Abre el enlace en Google Chrome.",
+        "2. Pulsa *Activar Acceso* (el código ya aparece cargado).",
+        "3. Toca los tres puntitos (⋮) arriba a la derecha.",
+        "4. Elige *Agregar a la pantalla principal* o *Instalar aplicación*.",
+        "",
+        "🍎 *Cómo instalar en iPhone (Safari):*",
+        "1. Abre el enlace desde Safari.",
+        "2. Pulsa *Activar Acceso*.",
+        "3. Toca el botón *Compartir* (cuadrado con flecha hacia arriba).",
+        "4. Selecciona *Agregar a inicio* y confirma en *Agregar*."
+      ].join("\n");
+    }
+
+    async function copiarTexto(texto, aviso) {
+      try {
+        await navigator.clipboard.writeText(texto);
+        mostrarToast(aviso);
+      } catch (e) {
+        prompt("Copia este texto:", texto);
+      }
+    }
+
+    function formatearFecha(ts) {
+      if (!ts || typeof ts.toDate !== "function") return "-";
+      return ts.toDate().toLocaleString("es-AR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function estadoDeCodigo(data) {
+      if (data.activo !== true) return { texto: "Revocado", clase: "badge-revocado", tipo: "inactivo" };
+      if (data.usado === true) return { texto: "Usado", clase: "badge-usado", tipo: "usado" };
+      if (data.expiraEn && typeof data.expiraEn.toDate === "function" && data.expiraEn.toDate().getTime() < Date.now()) {
+        return { texto: "Expirado", clase: "badge-expirado", tipo: "inactivo" };
+      }
+      return { texto: "Disponible", clase: "badge-disponible", tipo: "disponible" };
+    }
+
+    async function cargarCodigos() {
+      listaCodigosEl.textContent = "Cargando códigos...";
+      try {
+        const snap = await db.collection("codigos_acceso").orderBy("creadoEn", "desc").get();
+        let total = 0, disponibles = 0, usados = 0, inactivos = 0;
+
+        if (snap.empty) {
+          listaCodigosEl.innerHTML = '<p style="color:#667568; font-size:0.9rem;">Aún no has generado ningún código.</p>';
+        } else {
+          listaCodigosEl.innerHTML = "";
+          snap.forEach((doc) => {
+            total++;
+            const data = doc.data();
+            const est = estadoDeCodigo(data);
+            if (est.tipo === "disponible") disponibles++;
+            else if (est.tipo === "usado") usados++;
+            else inactivos++;
+
+            const div = document.createElement("div");
+            div.className = "code-item";
+
+            const notaTexto = data.nota ? ` · <b>${data.nota}</b>` : "";
+            const expTexto = data.expiraEn ? `Vence: ${formatearFecha(data.expiraEn)}` : "Sin vencimiento";
+            const usoTexto = data.usadoEn ? ` · Usado: ${formatearFecha(data.usadoEn)}` : "";
+
+            div.innerHTML = `
+              <div class="code-main">
+                <div class="code-title-row">
+                  <span class="code-text">${doc.id}</span>
+                  <span class="badge ${est.clase}">${est.texto}</span>
+                </div>
+                <div class="code-meta">
+                  Creado: ${formatearFecha(data.creadoEn)}${notaTexto}<br>
+                  ${expTexto}${usoTexto}
+                </div>
+              </div>
+              <div class="actions-row">
+                ${est.tipo === "disponible" ? `<button class="btn btn-secondary btn-small" data-accion="ws" data-id="${doc.id}">Copiar WhatsApp</button>` : ""}
+                ${data.activo === true ? `<button class="btn btn-danger btn-small" data-accion="revocar" data-id="${doc.id}">${data.usado ? "Revocar acceso" : "Desactivar"}</button>` : `<button class="btn btn-secondary btn-small" data-accion="reactivar" data-id="${doc.id}">Reactivar</button>`}
+                <button class="btn btn-danger btn-small" data-accion="borrar" data-id="${doc.id}">Eliminar</button>
+              </div>
+            `;
+            listaCodigosEl.appendChild(div);
+          });
+        }
+
+        document.getElementById("stat-total").textContent = total;
+        document.getElementById("stat-disponibles").textContent = disponibles;
+        document.getElementById("stat-usados").textContent = usados;
+        document.getElementById("stat-inactivos").textContent = inactivos;
+      } catch (err) {
+        listaCodigosEl.innerHTML = `<div class="error-box visible">Error al leer códigos: ${err.message}</div>`;
+      }
+    }
+
+    document.getElementById("form-login").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.classList.remove("visible");
+
+      if (location.protocol === "file:") {
+        loginError.textContent = "Para iniciar sesión en el panel administrador debes abrir admin.html desde GitHub Pages (https://...) o Live Server en VS Code.";
+        loginError.classList.add("visible");
+        return;
+      }
+
+      const btn = document.getElementById("btn-login");
+      btn.disabled = true;
+      btn.textContent = "Ingresando...";
+
+      try {
+        await auth.signInWithEmailAndPassword(
+          document.getElementById("email").value.trim(),
+          document.getElementById("password").value
+        );
+      } catch (err) {
+        let msg = "Correo o contraseña incorrectos.";
+        if (err.code === "auth/unauthorized-domain") {
+          msg = "Agrega este dominio en Firebase Console → Authentication → Configuración → Dominios autorizados.";
+        }
+        loginError.textContent = msg;
+        loginError.classList.add("visible");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ingresar";
+      }
+    });
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      auth.signOut();
+    });
+
+    document.getElementById("btn-generar").addEventListener("click", async () => {
+      const btn = document.getElementById("btn-generar");
+      btn.disabled = true;
+      btn.textContent = "Generando...";
+
+      try {
+        const codigo = generarCodigoAleatorio();
+        const horas = parseInt(selectVigencia.value, 10);
+        const expiraEn = horas > 0
+          ? firebase.firestore.Timestamp.fromDate(new Date(Date.now() + horas * 3600 * 1000))
+          : null;
+
+        await db.collection("codigos_acceso").doc(codigo).set({
+          activo: true,
+          usado: false,
+          nota: inputNota.value.trim(),
+          expiraEn: expiraEn,
+          creadoEn: firebase.firestore.FieldValue.serverTimestamp(),
+          usadoEn: null,
+          dispositivoId: null
+        });
+
+        ultimoCodigoGenerado = codigo;
+        ultimoCodigoEl.textContent = codigo;
+        resultBox.classList.add("visible");
+        inputNota.value = "";
+        mostrarToast("Código " + codigo + " creado");
+        await cargarCodigos();
+      } catch (err) {
+        alert("No se pudo crear el código: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Generar Código Único";
+      }
+    });
+
+    document.getElementById("btn-copiar-ws").addEventListener("click", () => {
+      if (!ultimoCodigoGenerado) return;
+      copiarTexto(construirMensajeWhatsApp(ultimoCodigoGenerado), "Invitación de WhatsApp copiada");
+    });
+
+    document.getElementById("btn-copiar-solo").addEventListener("click", () => {
+      if (!ultimoCodigoGenerado) return;
+      copiarTexto(ultimoCodigoGenerado, "Código copiado");
+    });
+
+    document.getElementById("btn-recargar").addEventListener("click", cargarCodigos);
+
+    listaCodigosEl.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button[data-accion]");
+      if (!btn) return;
+      const accion = btn.dataset.accion;
+      const id = btn.dataset.id;
+
+      if (accion === "ws") {
+        copiarTexto(construirMensajeWhatsApp(id), "Invitación de WhatsApp copiada");
+      } else if (accion === "revocar") {
+        await db.collection("codigos_acceso").doc(id).update({ activo: false });
+        mostrarToast("Código " + id + " desactivado");
+        cargarCodigos();
+      } else if (accion === "reactivar") {
+        await db.collection("codigos_acceso").doc(id).update({ activo: true });
+        mostrarToast("Código " + id + " reactivado");
+        cargarCodigos();
+      } else if (accion === "borrar") {
+        if (!confirm("¿Eliminar permanentemente el código " + id + "?")) return;
+        await db.collection("codigos_acceso").doc(id).delete();
+        mostrarToast("Código " + id + " eliminado");
+        cargarCodigos();
+      }
+    });
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        adminEmail.textContent = "Sesión activa: " + user.email;
+        vistaLogin.classList.add("hidden");
+        vistaPanel.classList.remove("hidden");
+        cargarCodigos();
+      } else {
+        vistaPanel.classList.add("hidden");
+        vistaLogin.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

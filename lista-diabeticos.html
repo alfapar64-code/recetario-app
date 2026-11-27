@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ensaladas para Diabéticos - Recetario</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f6f5;
+      color: #2c3e30;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #f9fbf9;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding-bottom: 32px;
+    }
+
+    .top-bar {
+      background-color: #2e7d32;
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 2px 6px 2px 0;
+    }
+
+    .top-bar h1 {
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .intro-card {
+      margin: 16px 16px 8px;
+      background-color: #edf7ee;
+      border: 1px solid #c8e6c9;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    .intro-text h2 {
+      font-size: 0.98rem;
+      color: #1b5e20;
+      margin-bottom: 4px;
+    }
+
+    .intro-text p {
+      font-size: 0.85rem;
+      color: #466048;
+      line-height: 1.4;
+    }
+
+    .recipe-list {
+      padding: 8px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .recipe-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.14);
+    }
+
+    .recipe-thumb {
+      width: 68px;
+      height: 68px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background-color: #e8f5e9;
+    }
+
+    .recipe-info h3 {
+      font-size: 1rem;
+      color: #2e7d32;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .recipe-info p {
+      font-size: 0.85rem;
+      color: #667568;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="top-bar">
+      <a class="back-link" href="index.html" aria-label="Volver al inicio">&#8592;</a>
+      <h1>Ensaladas para Diabéticos</h1>
+    </header>
+
+    <section class="intro-card">
+      <div class="intro-text">
+        <h2>Sin azúcar · Bajo índice glucémico</h2>
+        <p>11 recetas exclusivas ricas en fibra y proteína, creadas para controlar la glucemia sin sacrificar el sabor.</p>
+      </div>
+    </section>
+
+    <main class="recipe-list">
+      <a class="recipe-card" href="receta-diabeticos.html?id=cesar-fit">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/cesar_fit.webp" alt="Ensalada César Fit" />
+        <div class="recipe-info">
+          <h3>Ensalada César Fit</h3>
+          <p>Pollo a la parrilla con aderezo ligero de limón y Dijon</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=pollo-aguacate">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/pollo_aguacate.webp" alt="Bowl de Pollo, Rúcula y Aguacate" />
+        <div class="recipe-info">
+          <h3>Bowl de Pollo, Rúcula y Aguacate</h3>
+          <p>Proteína magra, grasas saludables y base fresca de rúcula</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=griega-feta">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/griega_feta.webp" alt="Ensalada Griega con Queso Feta" />
+        <div class="recipe-info">
+          <h3>Ensalada Griega con Queso Feta</h3>
+          <p>Clásico mediterráneo con queso feta, aceitunas y orégano</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=salmon-parrilla">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/salmon_parrilla.webp" alt="Ensalada de Salmón a la Parrilla" />
+        <div class="recipe-info">
+          <h3>Ensalada de Salmón a la Parrilla</h3>
+          <p>Rica en omega 3 con alcaparras, limón amarillo y eneldo</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=atun-pepino">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/atun_pepino.webp" alt="Ensalada de Atún con Pepino" />
+        <div class="recipe-info">
+          <h3>Ensalada de Atún con Pepino</h3>
+          <p>Refrescante, ligera sin papa y lista en minutos</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=garbanzo-curcuma">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/garbanzo_curcuma.webp" alt="Ensalada de Garbanzo y Espinaca con Cúrcuma" />
+        <div class="recipe-info">
+          <h3>Ensalada de Garbanzo y Espinaca con Cúrcuma</h3>
+          <p>Fibra vegetal, espinaca baby y aderezo dorado de cúrcuma</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=huevos-espinaca">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/huevos_espinaca.webp" alt="Ensalada de Huevos con Espinaca" />
+        <div class="recipe-info">
+          <h3>Ensalada de Huevos con Espinaca</h3>
+          <p>Rica en proteína con vinagreta suave de mostaza Dijon</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=quinoa-verduras">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/quinoa_verduras.webp" alt="Ensalada de Quinoa con Verduras" />
+        <div class="recipe-info">
+          <h3>Ensalada de Quinoa con Verduras</h3>
+          <p>Quinoa graneada con calabacita y pimiento rojo asados</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=pepino-yogur">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/pepino_yogur.webp" alt="Ensalada de Pepino con Yogur y Menta" />
+        <div class="recipe-info">
+          <h3>Ensalada de Pepino con Yogur y Menta</h3>
+          <p>Cremosa, fría y ultra refrescante con ajo y menta</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=rucula-nueces">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/rucula_nueces.webp" alt="Ensalada de Rúcula con Nueces y Parmesano" />
+        <div class="recipe-info">
+          <h3>Ensalada de Rúcula con Nueces y Parmesano</h3>
+          <p>Estilo bistró con nueces tostadas y lajas de parmesano</p>
+        </div>
+      </a>
+      <a class="recipe-card" href="receta-diabeticos.html?id=lenteja-zanahoria">
+        <img class="recipe-thumb" src="grupo_diabeticos/img/lenteja_zanahoria.webp" alt="Ensalada de Lenteja con Zanahoria Asada" />
+        <div class="recipe-info">
+          <h3>Ensalada de Lenteja con Zanahoria Asada</h3>
+          <p>Lentejas al dente con zanahorias horneadas al comino</p>
+        </div>
+      </a>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const CLAVE_INTRO_GRUPO = "intro_reproducida_grupo_diabeticos";
+      let yaReproducido = false;
+
+      try {
+        yaReproducido = sessionStorage.getItem(CLAVE_INTRO_GRUPO) === "1";
+      } catch (e) {}
+
+      if (!yaReproducido) {
+        const introAudio = new Audio("grupo_diabeticos/audio/diabeticos_introduccion.mp3");
+        introAudio.play().then(() => {
+          try {
+            sessionStorage.setItem(CLAVE_INTRO_GRUPO, "1");
+          } catch (e) {}
+        }).catch(() => {});
+      }
+    })();
+  </script>
+</body>
+</html>

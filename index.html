@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetario Saludable</title>
+
+    <!-- Configuración PWA para instalación en Android y iPhone -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Recetario">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <style>
+        :root {
+            --color-fondo: #f4f7f6;
+            --color-primario: #2e7d32;
+            --color-secundario: #4caf50;
+            --color-texto: #333333;
+            --color-blanco: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px; 
+            background-color: var(--color-blanco);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+            color: var(--color-blanco);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+        }
+
+        .app-header h1 {
+            font-size: 1.5rem;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: var(--color-blanco);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--color-blanco);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        }
+
+        .logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.16);
+            display: block;
+        }
+
+        .menu-section {
+            padding: 25px 20px;
+        }
+
+        .menu-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .category-card {
+            background-color: var(--color-blanco);
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--color-texto);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .category-card:hover, .category-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-color: var(--color-secundario);
+        }
+
+        .icon-placeholder {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            background-color: #e8f5e9;
+            border-radius: 12px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-text h3 {
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .card-text p {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 48, 22, 0.85);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .overlay.visible {
+            display: flex;
+        }
+
+        .lock-overlay {
+            background: linear-gradient(160deg, #1b5e20, #2e7d32 60%, #43a047);
+            z-index: 200;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 350px;
+            background: var(--color-blanco);
+            border-radius: 22px;
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.26);
+        }
+
+        .modal-card .logo-placeholder {
+            width: 104px;
+            height: 104px;
+            margin-bottom: 14px;
+            border: 3px solid var(--color-secundario);
+        }
+
+        .modal-card h2 {
+            color: var(--color-primario);
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .modal-card p {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            margin-bottom: 18px;
+        }
+
+        .code-input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            font-size: 1.08rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #1b5e20;
+            outline: none;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .code-input:focus {
+            border-color: var(--color-primario);
+        }
+
+        .error-msg {
+            color: #c62828;
+            background: #ffebee;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 0.84rem;
+            margin-bottom: 14px;
+            display: none;
+            line-height: 1.35;
+        }
+
+        .error-msg.visible {
+            display: block;
+        }
+
+        .primary-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+            color: var(--color-blanco);
+            border: none;
+            border-radius: 30px;
+            padding: 13px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.38);
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .lock-note {
+            font-size: 0.78rem;
+            color: #777;
+            margin-top: 14px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Seguridad (Código de un solo uso) -->
+    <div id="lock-overlay" class="overlay lock-overlay visible">
+        <div class="modal-card">
+            <div class="logo-placeholder">
+                <img src="logo.jpg" alt="Logo Recetario Saludable">
+            </div>
+            <h2>Acceso Exclusivo</h2>
+            <p>Ingresa tu código personal de un solo uso para activar el recetario en este dispositivo.</p>
+
+            <form id="form-codigo">
+                <input
+                    id="input-codigo"
+                    class="code-input"
+                    type="text"
+                    placeholder="EJ: SANO-7K4M9P"
+                    autocomplete="off"
+                    required
+                />
+                <div id="lock-error" class="error-msg"></div>
+                <button id="btn-validar-codigo" type="submit" class="primary-btn">Activar Acceso</button>
+            </form>
+
+            <p class="lock-note">Tu código queda vinculado a este teléfono tras la activación.</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Bienvenida (para activar el audio inicial en Chrome/Safari) -->
+    <div id="welcome-overlay" class="overlay">
+        <div class="modal-card">
+            <div class="logo-placeholder">
+                <img src="logo.jpg" alt="Logo Recetario Saludable">
+            </div>
+            <h2>Menú Saludable</h2>
+            <p>Descubre recetas frescas, nutritivas y deliciosas para tu día a día.</p>
+            <button id="btn-entrar-app" class="primary-btn">Entrar al Recetario</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-placeholder">
+                <img src="logo.jpg" alt="Logo Recetario Saludable">
+            </div>
+            <h1>Menú Saludable</h1>
+            <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 5px;">Descubre recetas frescas y nutritivas</p>
+        </header>
+
+        <main class="menu-section">
+            <h2>Categorías de Recetas</h2>
+            
+            <div class="category-grid">
+                <a href="lista-rapida.html" class="category-card">
+                    <div class="icon-placeholder">🥗</div>
+                    <div class="card-text">
+                        <h3>Guía Rápida</h3>
+                        <p>Recetas fáciles para tu día a día</p>
+                    </div>
+                </a>
+
+                <a href="lista-detox.html" class="category-card">
+                    <div class="icon-placeholder">🌿</div>
+                    <div class="card-text">
+                        <h3>Ensaladas Detox</h3>
+                        <p>5 recetas para limpieza y energía</p>
+                    </div>
+                </a>
+
+                <a href="lista-diabeticos.html" class="category-card">
+                    <div class="icon-placeholder">🥑</div>
+                    <div class="card-text">
+                        <h3>Para Diabéticos</h3>
+                        <p>11 opciones de bajo índice glucémico</p>
+                    </div>
+                </a>
+
+                <a href="lista-aderezos.html" class="category-card">
+                    <div class="icon-placeholder">🍋</div>
+                    <div class="card-text">
+                        <h3>Aderezos Irresistibles</h3>
+                        <p>9 salsas y aderezos caseros</p>
+                    </div>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK + Lógica de Seguridad -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="seguridad.js"></script>
+
+    <script>
+        // Registro del Service Worker para permitir instalación como App (PWA)
+        if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./sw.js").catch(() => {});
+            });
+        }
+
+        (function () {
+            const CLAVE_INTRO_APP = "intro_reproducida_app_principal";
+            const lockOverlay = document.getElementById("lock-overlay");
+            const welcomeOverlay = document.getElementById("welcome-overlay");
+            const formCodigo = document.getElementById("form-codigo");
+            const inputCodigo = document.getElementById("input-codigo");
+            const lockError = document.getElementById("lock-error");
+            const btnValidar = document.getElementById("btn-validar-codigo");
+            const btnEntrar = document.getElementById("btn-entrar-app");
+
+            const introAudio = new Audio("inicio_introduccion.mp3");
+            let bienvenidaIniciada = false;
+
+            function yaFueReproducido() {
+                try {
+                    if (sessionStorage.getItem(CLAVE_INTRO_APP) === "1") return true;
+                } catch (e) {}
+                return window.name.includes(CLAVE_INTRO_APP);
+            }
+
+            function marcarReproducido() {
+                try {
+                    sessionStorage.setItem(CLAVE_INTRO_APP, "1");
+                } catch (e) {}
+                if (!window.name.includes(CLAVE_INTRO_APP)) {
+                    window.name = (window.name ? window.name + "|" : "") + CLAVE_INTRO_APP;
+                }
+            }
+
+            function iniciarBienvenida() {
+                if (bienvenidaIniciada || yaFueReproducido()) return;
+                bienvenidaIniciada = true;
+
+                introAudio.play().then(() => {
+                    marcarReproducido();
+                }).catch(() => {
+                    welcomeOverlay.classList.add("visible");
+                });
+            }
+
+            function mostrarBloqueo(mensaje) {
+                introAudio.pause();
+                introAudio.currentTime = 0;
+                welcomeOverlay.classList.remove("visible");
+                lockOverlay.classList.add("visible");
+                if (mensaje) {
+                    lockError.textContent = mensaje;
+                    lockError.classList.add("visible");
+                }
+            }
+
+            function desbloquearApp() {
+                lockOverlay.classList.remove("visible");
+                lockError.classList.remove("visible");
+                iniciarBienvenida();
+            }
+
+            // Si el enlace trae ?codigo=XXXX, lo autocompleta en el campo
+            const params = new URLSearchParams(window.location.search);
+            const codigoUrl = params.get("codigo");
+            if (codigoUrl) {
+                inputCodigo.value = codigoUrl.trim().toUpperCase();
+            }
+
+            document.querySelectorAll("a.category-card").forEach((enlace) => {
+                enlace.addEventListener("click", () => {
+                    marcarReproducido();
+                    introAudio.pause();
+                    introAudio.currentTime = 0;
+                });
+            });
+
+            window.addEventListener("pagehide", () => {
+                introAudio.pause();
+                introAudio.currentTime = 0;
+            });
+
+            window.addEventListener("pageshow", (evento) => {
+                if (evento.persisted) {
+                    introAudio.pause();
+                    introAudio.currentTime = 0;
+                }
+            });
+
+            btnEntrar.addEventListener("click", () => {
+                welcomeOverlay.classList.remove("visible");
+                marcarReproducido();
+                introAudio.play().catch(() => {});
+            });
+
+            formCodigo.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                lockError.classList.remove("visible");
+                btnValidar.disabled = true;
+                btnValidar.textContent = "Verificando...";
+
+                try {
+                    await window.RecetarioSeguridad.activarCodigo(inputCodigo.value);
+                    desbloquearApp();
+                } catch (err) {
+                    lockError.textContent = err.message || "No se pudo validar el código.";
+                    lockError.classList.add("visible");
+                } finally {
+                    btnValidar.disabled = false;
+                    btnValidar.textContent = "Activar Acceso";
+                }
+            });
+
+            // Verificar si este dispositivo ya tiene acceso activado
+            if (window.RecetarioSeguridad.obtenerAccesoLocal()) {
+                desbloquearApp();
+                window.RecetarioSeguridad.verificarAccesoEnSegundoPlano((msg) => {
+                    mostrarBloqueo(msg);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
