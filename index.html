@@ -82,13 +82,81 @@
         }
 
         .menu-section {
-            padding: 25px 20px;
+            padding: 22px 20px 30px;
         }
 
         .menu-section h2 {
             font-size: 1.1rem;
             margin-bottom: 15px;
             color: #555;
+        }
+
+        /* Banner de instalación PWA */
+        .install-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #edf7ee;
+            border: 1.5px solid #a5d6a7;
+            border-radius: 16px;
+            padding: 14px 15px;
+            margin-bottom: 20px;
+        }
+
+        .install-banner.visible {
+            display: flex;
+        }
+
+        .install-info {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .install-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--color-blanco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 2px 6px rgba(46, 125, 50, 0.14);
+        }
+
+        .install-text strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #1b5e20;
+            margin-bottom: 2px;
+        }
+
+        .install-text span {
+            display: block;
+            font-size: 0.78rem;
+            color: #4a634d;
+            line-height: 1.3;
+        }
+
+        .install-btn {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+            color: var(--color-blanco);
+            border: none;
+            border-radius: 22px;
+            padding: 9px 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(46, 125, 50, 0.25);
+            transition: transform 0.15s;
+        }
+
+        .install-btn:active {
+            transform: scale(0.96);
         }
 
         .category-grid {
@@ -188,6 +256,25 @@
             font-size: 0.9rem;
             line-height: 1.45;
             margin-bottom: 18px;
+        }
+
+        .install-steps {
+            text-align: left;
+            background: #f4f7f6;
+            border-radius: 14px;
+            padding: 14px 16px 14px 30px;
+            margin-bottom: 18px;
+            font-size: 0.88rem;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .install-steps li {
+            margin-bottom: 6px;
+        }
+
+        .install-steps li:last-child {
+            margin-bottom: 0;
         }
 
         .code-input {
@@ -297,6 +384,16 @@
         </div>
     </div>
 
+    <!-- Guía rápida de instalación manual (para iPhone o navegador interno) -->
+    <div id="install-help-overlay" class="overlay">
+        <div class="modal-card">
+            <h2 id="install-help-title">Instalar en tu teléfono</h2>
+            <p id="install-help-subtitle">Agrega el ícono a tu pantalla de inicio para entrar en un toque:</p>
+            <ol id="install-help-steps" class="install-steps"></ol>
+            <button id="btn-cerrar-ayuda" class="primary-btn">Entendido</button>
+        </div>
+    </div>
+
     <div class="app-container">
         <header class="app-header">
             <div class="logo-placeholder">
@@ -307,6 +404,18 @@
         </header>
 
         <main class="menu-section">
+            <!-- Botón visible de instalación -->
+            <div id="install-banner" class="install-banner">
+                <div class="install-info">
+                    <div class="install-icon">📲</div>
+                    <div class="install-text">
+                        <strong>Instala la App</strong>
+                        <span>Agrégala a tu pantalla de inicio</span>
+                    </div>
+                </div>
+                <button id="btn-instalar-app" class="install-btn">Instalar</button>
+            </div>
+
             <h2>Categorías de Recetas</h2>
             
             <div class="category-grid">
@@ -358,6 +467,97 @@
             });
         }
 
+        // Control del botón de instalación PWA
+        (function () {
+            const installBanner = document.getElementById("install-banner");
+            const btnInstalar = document.getElementById("btn-instalar-app");
+            const helpOverlay = document.getElementById("install-help-overlay");
+            const helpTitle = document.getElementById("install-help-title");
+            const helpSubtitle = document.getElementById("install-help-subtitle");
+            const helpSteps = document.getElementById("install-help-steps");
+            const btnCerrarAyuda = document.getElementById("btn-cerrar-ayuda");
+
+            let eventoInstalacion = null;
+
+            function esAppInstalada() {
+                return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+            }
+
+            const esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+            const esNavegadorInterno = /WhatsApp|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
+
+            if (!esAppInstalada()) {
+                installBanner.classList.add("visible");
+            }
+
+            window.addEventListener("beforeinstallprompt", (e) => {
+                e.preventDefault();
+                eventoInstalacion = e;
+                if (!esAppInstalada()) {
+                    installBanner.classList.add("visible");
+                }
+            });
+
+            window.addEventListener("appinstalled", () => {
+                eventoInstalacion = null;
+                installBanner.classList.remove("visible");
+                helpOverlay.classList.remove("visible");
+            });
+
+            function mostrarGuiaManual() {
+                if (esIOS) {
+                    helpTitle.textContent = "Instalar en iPhone";
+                    helpSubtitle.textContent = "Abre este enlace en Safari y sigue estos pasos:";
+                    helpSteps.innerHTML = [
+                        "<li>Toca el botón <strong>Compartir</strong> (cuadrado con flecha hacia arriba) en la barra inferior.</li>",
+                        "<li>Desliza hacia abajo y elige <strong>Agregar a inicio</strong>.</li>",
+                        "<li>Pulsa <strong>Agregar</strong> arriba a la derecha.</li>"
+                    ].join("");
+                } else if (esNavegadorInterno) {
+                    helpTitle.textContent = "Ábrelo en Chrome para instalar";
+                    helpSubtitle.textContent = "Estás dentro del navegador interno de WhatsApp o redes sociales:";
+                    helpSteps.innerHTML = [
+                        "<li>Toca los <strong>tres puntitos (⋮)</strong> arriba a la derecha.</li>",
+                        "<li>Elige <strong>Abrir en Chrome</strong>.</li>",
+                        "<li>Ya en Chrome, toca el botón verde <strong>Instalar</strong>.</li>"
+                    ].join("");
+                } else {
+                    helpTitle.textContent = "Instalar en tu dispositivo";
+                    helpSubtitle.textContent = "Completa la instalación desde el menú de tu navegador:";
+                    helpSteps.innerHTML = [
+                        "<li>Toca los <strong>tres puntitos (⋮)</strong> en la esquina superior derecha.</li>",
+                        "<li>Selecciona <strong>Agregar a la pantalla principal</strong> o <strong>Instalar aplicación</strong>.</li>",
+                        "<li>Confirma pulsando <strong>Instalar</strong>.</li>"
+                    ].join("");
+                }
+                helpOverlay.classList.add("visible");
+            }
+
+            btnInstalar.addEventListener("click", async () => {
+                if (eventoInstalacion) {
+                    eventoInstalacion.prompt();
+                    const eleccion = await eventoInstalacion.userChoice;
+                    if (eleccion && eleccion.outcome === "accepted") {
+                        installBanner.classList.remove("visible");
+                    }
+                    eventoInstalacion = null;
+                } else {
+                    mostrarGuiaManual();
+                }
+            });
+
+            btnCerrarAyuda.addEventListener("click", () => {
+                helpOverlay.classList.remove("visible");
+            });
+
+            helpOverlay.addEventListener("click", (e) => {
+                if (e.target === helpOverlay) {
+                    helpOverlay.classList.remove("visible");
+                }
+            });
+        })();
+
+        // Control de seguridad y audio de bienvenida
         (function () {
             const CLAVE_INTRO_APP = "intro_reproducida_app_principal";
             const lockOverlay = document.getElementById("lock-overlay");
